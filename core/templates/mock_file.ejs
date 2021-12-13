@@ -1,0 +1,53 @@
+<% if(!isAppend) { %>
+  const joi = require("joi");
+  const Mock = require("mockjs");
+<% } %>
+/**
+ * @description
+ * apiName: <%= name %>
+ * apiMethod: <%= method %>
+ * apiURI: <%= uri %>
+ */
+exports.<%= method %> = async (ctx, next) => {
+  // 路由参数 query 参数 body 参数
+  const { params, query, body } = ctx.request ?? {};
+
+  // 验证 body 参数
+  const bodySchema = joi.object({
+    <% for(const [name, config] of Object.entries(joi_data?.bodyParams ?? {})) { _%>
+      "<%- name %>": <%- joiToString(config) _%>,
+    <% } _%>
+  });
+
+  // 验证 query 参数
+  const querySchema = joi.object({
+    <% for(const [name, config] of Object.entries(joi_data?.queryParams ?? {})) { _%>
+      "<%- name %>": <%- joiToString(config) _%>,
+    <% } _%>
+  });
+
+  // 验证 restful 参数
+  const restfulSchema = joi.object({
+    <% for(const [name, config] of Object.entries(joi_data?.restfulParams ?? {})) { _%>
+      "<%- name %>": <%- joiToString(config) _%>,
+    <% } _%>
+  });
+  try {
+    const config = { convert: false, allowUnknown: true };
+    await bodySchema.validateAsync(body, config)
+    await querySchema.validateAsync(query, config)
+    await restfulSchema.validateAsync(params, config)
+
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    <% if(arrayRoot) { _%>
+      ctx.body = Mock.mock({"list|0-10":[<%- mock_data %>]}).list;
+    <% } else { _%>
+      ctx.body = Mock.mock(<%- mock_data %>);
+    <% } _%>
+  } catch (error) {
+    ctx.throw(400, error.message);
+  }
+};
+  
+  
+  

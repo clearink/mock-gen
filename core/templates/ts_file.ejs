@@ -1,0 +1,26 @@
+/**
+ * @description
+ * apiName: <%= name %>
+ * apiMethod: <%= method %>
+ * apiURI: <%= uri %>
+ */
+export namespace <%= name %> {
+  // body 参数
+  export interface BodyParams {
+    <% for(const [name, config] of Object.entries(bodyData ?? {})) { _%>
+      <%- name %>: <%- config _%>;
+    <% } _%>
+  }
+  // query 参数
+  export interface QueryParams {
+    <% for(const [name, config] of Object.entries(queryData ?? {})) { _%>
+      <%- name %>: <%- config _%>;
+    <% } _%>
+  }
+  // 响应 数据
+  export interface ResponseData {
+    <% for(const [name, config] of Object.entries(responseData ?? {})) { _%>
+      <%- name %>: <%- config _%>;
+    <% } _%>
+  }
+}
