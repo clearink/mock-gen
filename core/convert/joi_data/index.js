@@ -1,4 +1,3 @@
-const { joiEnumString } = require("./utils");
 const {
   API_REQUEST_PARAM_TYPE: TYPE,
   API_PARAM_REQUIRED,
@@ -69,7 +68,12 @@ function schemaToJoi(schema, structMap, apiConfig, strict = false) {
 
   if (shouldGenerate !== false) {
     // 其他需求暂不明确 目前只处理枚举值
-    return [["valid(", joiEnumString(shouldGenerate.joi), ")"]];
+    let enumList = shouldGenerate.joi;
+    if (Array.isArray(enumList)) {
+      enumList = JSON.stringify(enumList).replace(/(^\[)|(\]$)/g, "");
+    }
+
+    return [["valid(", enumList, ")"]];
   }
   // 类型字符串
   const type = normalizeParamType(schema, structMap);

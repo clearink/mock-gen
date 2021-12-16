@@ -7,13 +7,15 @@ const { API_REQUEST_PARAM_TYPE: TYPE } = require("../../constant");
  */
 function normalizeParamType(schema, structMap) {
   const { paramType, childList = [] } = schema;
-  // // 如果自定义结构体中有该类型 直接返回
+
+  // 如果自定义结构体中有该类型 直接返回
   if (structMap.has(paramType)) {
     const { type, struct } = structMap.get(paramType);
     schema.childList = struct;
     schema.paramType = TYPE.matchKey(type, "object").value;
     return TYPE.matchValue(schema.paramType)?.key;
   }
+  
   // 如果 有子元素 且类型不是 json,object,array 默认修正为 object
   const complexType = ["json", "object", "array"];
   if (childList.length > 0 && !TYPE.when(paramType, complexType)) {

@@ -5,7 +5,8 @@ const shouldGenerateApi = require("./should_generate_api");
 const normalizeFilePath = require("./normalize_file_path");
 const createFolder = require("./create_folder");
 const joiToString = require("./joi_to_string");
-const normalizeTsData = require("./normalize_file_path");
+const normalizeTsData = require("./normalize_ts_data");
+const normalizeRootName = require("./normalize_ts_data/normalize_root_name");
 
 module.exports = {
   createFolder,
@@ -16,4 +17,5 @@ module.exports = {
   shouldGenerateApi,
   normalizeFilePath,
   normalizeTsData,
+  normalizeRootName,
 };

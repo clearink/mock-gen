@@ -8,6 +8,7 @@ const { API_REQUEST_TYPE } = require("../constant");
 const {
   shouldGenerateApi,
   normalizeFilePath,
+  normalizeRootName,
   normalizeTsData,
   createFolder,
 } = require("./utils");
@@ -23,25 +24,27 @@ const writeSet = new Set();
  */
 async function handleWriteFile({ apiConfig, isAppend, path, data }) {
   const { baseInfo } = apiConfig;
-  console.log("data", data);
   // 组装数据                           // 模板路径
   const fileData = await ejs.renderFile(path.templatePath, {
     method: API_REQUEST_TYPE.matchValue(baseInfo.apiRequestType).key,
-    bodyData: undefined,
-    queryData: undefined,
-    responseData: undefined,
-    // bodyData: normalizeTsData(data.request.body),
-    // queryData: normalizeTsData(data.request.query),
-    // responseData: normalizeTsData(data.response),
+    rootName: normalizeRootName(baseInfo),
+    body: normalizeTsData("BodyParam", data.request.body),
+    query: normalizeTsData("QueryParam", data.request.query),
+    response: normalizeTsData("Response", data.response),
     name: baseInfo.apiName,
     uri: baseInfo.apiURI,
   });
 
-  await fs[isAppend ? "appendFile" : "writeFile"](
-    path.filePath,
-    fileData
-    // prettier.format(fileData, { tabWidth: 4, filepath: path.filePath })
-  );
+  let formatted = fileData;
+  try {
+    formatted = prettier.format(fileData, {
+      tabWidth: 4,
+      filepath: path.filePath,
+    });
+  } catch (error) {
+    console.log(chalk.redBright(`❌ 文件格式化失败 请检查：${path.filePath}`));
+  }
+  await fs[isAppend ? "appendFile" : "writeFile"](path.filePath, formatted);
 }
 /**
  * @description 生成 ts 文件
@@ -61,6 +64,7 @@ async function generatorTsFile(apiGroup, structMap) {
     // 创建文件夹
     const createSuccess = await createFolder(filePath, baseInfo.apiURI);
     if (!createSuccess) continue;
+    console.log(chalk.green(`✌  ts 文件准备生成: ${filePath}`));
 
     // 生成文件
     await handleWriteFile({
@@ -70,7 +74,6 @@ async function generatorTsFile(apiGroup, structMap) {
       data: convertToTs(apiConfig, structMap), // 生成 ts 数据
     });
     writeSet.add(filePath);
-    console.log(chalk.green(`✌  ts 文件生成完毕: ${filePath}`));
     // 间隔 100ms 太快了内存会占满
     await new Promise((resolve) => setTimeout(resolve, 100));
   }

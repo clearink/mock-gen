@@ -20,7 +20,7 @@ function judgeGenerateEnum(schema, structMap, apiConfig, { matchType }) {
     return matchCustomRule(matchType, config, apiConfig, {
       content: enumList,
       joi: enumList,
-      ts: enumList,
+      tsContent: enumList,
       rule: "1",
     });
   }
@@ -31,7 +31,7 @@ function judgeGenerateEnum(schema, structMap, apiConfig, { matchType }) {
   return matchCustomRule(matchType, config, apiConfig, {
     content: enumList,
     joi: enumList,
-    ts: enumList,
+    tsContent: enumList,
     rule: "1",
   });
 }

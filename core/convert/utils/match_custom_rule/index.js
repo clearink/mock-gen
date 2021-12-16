@@ -2,7 +2,7 @@ const { customMatchRule } = require("../../../config");
 const findMockPlaceholder = require("./find_mock_placeholder");
 const judgeShouldMatch = require("./judge_should_match");
 const { API_REQUEST_PARAM_TYPE: TYPE } = require("../../../constant");
-const judgeInclude = require("../../../generator/utils/judge_include");
+const judgeInclude = require("../../../utils/judge_include");
 
 /**
  * @description 标准化 paramLimit
@@ -10,7 +10,7 @@ const judgeInclude = require("../../../generator/utils/judge_include");
  */
 function normalizeParamLimit(paramLimit) {
   try {
-    return JSON.parse(paramLimit);
+    return eval(`(()=>(${paramLimit}))()`);
   } catch (error) {
     return { content: paramLimit };
   }
@@ -41,19 +41,21 @@ function matchCustomRule(matchType, schema, apiConfig, initState) {
   // 针对 request 参数
   const editJoi = !result.joi; // 允许修改 joi 数据
   // 针对 ts 类型
-  const editTs = !result.ts; // 允许修改 ts 数据
+  const editTsType = !result.tsType; // 允许修改 ts 类型
+  const editTsContent = !result.tsContent; // 允许修改 ts 数据
 
   // 自定义 mock 规则同时设置了 rule 与 content 直接返回
   if (!editContent && !editRule && matchType === "mock") return result;
   if (!editJoi && matchType === "joi") return result;
-  if (!editTs && matchType === "ts") return result;
+  if (!editTsType && !editTsContent && matchType === "ts") return result;
 
   // 允许修改时才可以设置默认值
   if (editRule) result.rule = initState?.rule;
   if (editContent) result.content = initState?.content;
   if (editArgs) result.args = initState?.args;
   if (editJoi) result.joi = initState?.joi;
-  if (editTs) result.ts = initState?.ts;
+  if (editTsType) result.tsType = initState?.tsType;
+  if (editTsContent) result.tsContent = initState?.tsContent;
 
   for (const [name, config] of Object.entries(customMatchRule || {})) {
     // 生成正则表达式
@@ -71,6 +73,7 @@ function matchCustomRule(matchType, schema, apiConfig, initState) {
         const strictJudge = strict && paramKey === name;
         const looseJudge = !strict && reg.test(paramKey);
         if (!strictJudge && !looseJudge) continue;
+
         if (item.hasOwnProperty("rule") && (important || editRule)) {
           result.rule = item.rule;
         }
@@ -80,11 +83,16 @@ function matchCustomRule(matchType, schema, apiConfig, initState) {
         if (item.hasOwnProperty("args") && (important || editArgs)) {
           result.args = item.args;
         }
+
         if (item.hasOwnProperty("joi") && (important || editJoi)) {
           result.joi = item.joi;
         }
-        if (item.hasOwnProperty("ts") && (important || editTs)) {
-          result.ts = item.ts;
+
+        if (item.hasOwnProperty("tsType") && (important || editTsType)) {
+          result.tsType = item.tsType;
+        }
+        if (item.hasOwnProperty("tsContent") && (important || editTsType)) {
+          result.tsContent = item.tsContent;
         }
       } else if (reg.test(paramKey) && editContent) {
         result.content = item;

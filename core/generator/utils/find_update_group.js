@@ -1,4 +1,4 @@
-const judgeInclude = require("./judge_include");
+const judgeInclude = require("../../utils/judge_include");
 /**
  * @description 获取需要更新的组数据
  * @param {array} groupList eolinker 数据

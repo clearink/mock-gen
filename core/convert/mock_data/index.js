@@ -1,5 +1,3 @@
-const { normalizeComplexType } = require("./utils");
-const { API_REQUEST_PARAM_TYPE: TYPE } = require("../../constant");
 const {
   matchCustomRule,
   normalizeParam, // 修正错误的属性名称
@@ -96,10 +94,12 @@ function schemaToMock(schema, structMap, apiConfig) {
     case "object":
       const { childList = [] } = schema;
       const complexContent = generateMock(childList, structMap, apiConfig);
+      const isEmpty = Object.keys(complexContent).length === 0;
       const matched = matchCustomRule("mock", schema, apiConfig, {
-        content: complexContent,
+        content: isEmpty ? content : complexContent,
       });
-      return normalizeComplexType(matched.content, type === "array", matched);
+      const { rule: mRule, content: mContent } = matched;
+      return { rule: mRule, content: type === "array" ? [mContent] : mContent };
   }
   return matchCustomRule("mock", schema, apiConfig, { content });
 }

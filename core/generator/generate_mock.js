@@ -37,10 +37,16 @@ async function handleWriteFile({ apiConfig, isAppend, path, data }) {
     arrayRoot,
   });
 
-  await fs[isAppend ? "appendFile" : "writeFile"](
-    path.filePath,
-    prettier.format(fileData, { tabWidth: 4, filepath: path.filePath })
-  );
+  let formatted = fileData;
+  try {
+    formatted = prettier.format(fileData, {
+      tabWidth: 4,
+      filepath: path.filePath,
+    });
+  } catch (error) {
+    console.log(chalk.redBright(`❌ 文件格式化失败 请检查：${path.filePath}`));
+  }
+  await fs[isAppend ? "appendFile" : "writeFile"](path.filePath, formatted);
 }
 /**
  * @description 生成 mock 数据文件
@@ -65,7 +71,8 @@ async function generatorMockFile(apiGroup, structMap) {
 
     // 生成 joi 数据
     const joiData = convertToJoi(apiConfig, structMap);
-
+    
+    console.log(chalk.green(`✌  mock 文件准备生成: ${filePath}`));
     // 生成文件
     await handleWriteFile({
       apiConfig,
@@ -74,7 +81,6 @@ async function generatorMockFile(apiGroup, structMap) {
       data: { mockData, joiData },
     });
     writeSet.add(filePath);
-    console.log(chalk.green(`✌  mock 文件生成完毕: ${filePath}`));
     // 间隔 60ms 太快了内存会占满
     await new Promise((resolve) => setTimeout(resolve, 60));
   }

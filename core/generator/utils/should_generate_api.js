@@ -1,4 +1,4 @@
-const judgeInclude = require("./judge_include");
+const judgeInclude = require("../../utils/judge_include");
 const { API_STATUS } = require("../../constant");
 
 /**

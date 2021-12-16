@@ -1,5 +1,6 @@
 const { API_PARAM_REQUIRED } = require("../../constant");
 const {
+  matchCustomRule,
   judgeGenerateEnum,
   normalizeParam,
   normalizeParamType,
@@ -37,7 +38,10 @@ function generateTs(schemaList, structMap, apiConfig) {
       if (!struct) return result;
       return { ...result, ...generateTs(struct, structMap, apiConfig) };
     }
-    const content = schemaToTs(schema, structMap, apiConfig) || "any";
+    const content = schemaToTs(schema, structMap, apiConfig) ?? {
+      tsType: "any",
+      tsContent: "any",
+    };
     // 是否为必填项
     const suffix = API_PARAM_REQUIRED.when(paramNotNull, "required") ? "" : "?";
 
@@ -57,7 +61,13 @@ function schemaToTs(schema, structMap, apiConfig) {
     matchType: "ts",
   });
   if (shouldGenerate !== false) {
-    return shouldGenerate.ts?.join?.(" | ");
+    let enumList = shouldGenerate.tsContent;
+    if (Array.isArray(enumList)) {
+      enumList = JSON.stringify(enumList)
+        .replace(/(^\[)|(\]$)/g, "")
+        .replace(/\,/g, " | ");
+    }
+    return { tsType: "enum", tsContent: enumList };
   }
 
   // 获取类型字符串
@@ -68,10 +78,10 @@ function schemaToTs(schema, structMap, apiConfig) {
     case "char":
     case "date":
     case "datetime":
-      return "string";
+      return matchCustomRule("ts", schema, apiConfig, { tsContent: "string" });
     case "file":
       // 暂时不知道是啥玩意儿
-      return "any";
+      return matchCustomRule("ts", schema, apiConfig, { tsContent: "any" }).ts;
     case "int":
     case "float":
     case "double":
@@ -79,25 +89,24 @@ function schemaToTs(schema, structMap, apiConfig) {
     case "byte":
     case "short":
     case "long":
-      return "number";
+      return matchCustomRule("ts", schema, apiConfig, { tsContent: "number" });
     case "boolean":
-      return "boolean";
+      return matchCustomRule("ts", schema, apiConfig, { tsContent: "boolean" });
     case "null":
-      return "null";
+      return matchCustomRule("ts", schema, apiConfig, { tsContent: "null" });
     case "array":
     case "json":
     case "object":
       const { childList = [] } = schema;
       const tsType = type === "array" ? "any[]" : "Record<string, any>";
       const items = generateTs(childList, structMap, apiConfig);
-      if (Object.keys(items).length === 0) return tsType;
-      return { type, content: items };
+      const isEmpty = Object.keys(items).length === 0;
+      return matchCustomRule("ts", schema, apiConfig, {
+        tsContent: isEmpty ? tsType : items,
+        tsType: type,
+      });
   }
-  return "any";
+  return { tsType: "any", tsContent: "any" };
 }
-
-// 枚举值
-
-// 复杂类型 (array/object)
 
 module.exports = convertToTs;

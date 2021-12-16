@@ -1,4 +1,4 @@
-const judgeInclude = require('../../../generator/utils/judge_include')
+const judgeInclude = require('../../../utils/judge_include')
 
 /**
  * @description 是否应该匹配该规则
