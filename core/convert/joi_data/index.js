@@ -1,3 +1,4 @@
+const renderJoiEnum = require("./utils/render_joi_enum");
 const {
   API_REQUEST_PARAM_TYPE: TYPE,
   API_PARAM_REQUIRED,
@@ -61,22 +62,17 @@ function generateJoi(schemaList, structMap, apiConfig, strict = false) {
  * @param {boolean} strict 是否精确匹配类型
  */
 function schemaToJoi(schema, structMap, apiConfig, strict = false) {
+  // 获取参数的类型字符串 同时处理自定义数据结构
+  const type = normalizeParamType(schema, structMap);
+
   // 获取枚举值
   const shouldGenerate = judgeGenerateEnum(schema, structMap, apiConfig, {
     matchType: "joi",
   });
 
   if (shouldGenerate !== false) {
-    // 其他需求暂不明确 目前只处理枚举值
-    let enumList = shouldGenerate.joi;
-    if (Array.isArray(enumList)) {
-      enumList = JSON.stringify(enumList).replace(/(^\[)|(\]$)/g, "");
-    }
-
-    return [["valid(", enumList, ")"]];
+    return renderJoiEnum(shouldGenerate.joi, type);
   }
-  // 类型字符串
-  const type = normalizeParamType(schema, structMap);
 
   // 判断类型
   switch (type) {

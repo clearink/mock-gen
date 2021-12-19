@@ -5,6 +5,7 @@ const {
   normalizeParam,
   normalizeParamType,
 } = require("../utils");
+const renderTsEnum = require("./utils/render_ts_enum");
 
 /**
  * @description 生成 typescript 文件
@@ -56,22 +57,16 @@ function generateTs(schemaList, structMap, apiConfig) {
  * @param {object} apiConfig apiConfig 配置
  */
 function schemaToTs(schema, structMap, apiConfig) {
+  // 获取参数的类型字符串 同时处理自定义数据结构
+  const type = normalizeParamType(schema, structMap);
+
   // 获取枚举值
   const shouldGenerate = judgeGenerateEnum(schema, structMap, apiConfig, {
     matchType: "ts",
   });
   if (shouldGenerate !== false) {
-    let enumList = shouldGenerate.tsContent;
-    if (Array.isArray(enumList)) {
-      enumList = JSON.stringify(enumList)
-        .replace(/(^\[)|(\]$)/g, "")
-        .replace(/\,/g, " | ");
-    }
-    return { tsType: "enum", tsContent: enumList };
+    return renderTsEnum(shouldGenerate.tsContent, type);
   }
-
-  // 获取类型字符串
-  const type = normalizeParamType(schema, structMap);
 
   switch (type) {
     case "string":

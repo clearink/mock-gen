@@ -4,6 +4,7 @@ const {
   judgeGenerateEnum,
   normalizeParamType,
 } = require("../utils");
+const renderMockEnum = require("./utils/render_mock_enum");
 
 /**
  * @description 解析配置得到 mock 数据
@@ -44,15 +45,17 @@ function generateMock(schemaList, structMap, apiConfig) {
  * @returns {{ rule:string, content:any }}
  */
 function schemaToMock(schema, structMap, apiConfig) {
+  // 获取参数的类型字符串 同时处理自定义数据结构
+  const type = normalizeParamType(schema, structMap);
+
   // 获取枚举值
   const shouldGenerate = judgeGenerateEnum(schema, structMap, apiConfig, {
     matchType: "mock",
   });
 
-  if (shouldGenerate !== false) return shouldGenerate;
-
-  // 获取参数的类型字符串 同时处理自定义数据结构
-  const type = normalizeParamType(schema, structMap);
+  if (shouldGenerate !== false) {
+    return renderMockEnum(shouldGenerate, type);
+  }
 
   let content = "@word({args})";
   // 判断类型

@@ -5,7 +5,7 @@
       "projectID": 311862,
       "structureName": "Order",
       "structureDesc": null,
-      "updateTime": "2021-11-19 22:54:52",
+      "updateTime": "2021-12-20 22:49:39",
       "createUserID": 212216,
       "updateUserID": 212216,
       "structureData": "[{\"paramID\":\"eWSbXmS1a24e60992117667895117a76038a71de218c208\",\"paramKey\":\"id\",\"paramName\":null,\"paramNotNull\":\"1\",\"childList\":[],\"paramType\":\"3\",\"paramValueList\":[]},{\"paramID\":\"yCQGMxFf1a16b5cd725e5fff35a5eda7f152655f5949a0d\",\"paramKey\":\"petId\",\"paramName\":null,\"paramNotNull\":\"1\",\"childList\":[],\"paramType\":\"3\",\"paramValueList\":[]},{\"paramID\":\"jiJ6nPQddee6cae7b3d44815ed38e58385a64ffc69835c9\",\"paramKey\":\"quantity\",\"paramName\":null,\"paramNotNull\":\"1\",\"childList\":[],\"paramType\":\"3\",\"paramValueList\":[]},{\"paramID\":\"UN9ZTu66942004f0a5f96fca8f2018bee65becec1a6c865\",\"paramKey\":\"shipDate\",\"paramName\":null,\"paramNotNull\":\"1\",\"childList\":[],\"paramType\":\"0\",\"paramValueList\":[]},{\"paramID\":\"mQJra253270ce2a27afc7bb76964b5dbbd55015eff8e3f9\",\"paramKey\":\"status\",\"paramName\":\"Order Status\",\"paramNotNull\":\"1\",\"childList\":[],\"paramType\":\"0\",\"paramValueList\":[{\"value\":\"placed\",\"paramType\":\"0\",\"valueDescription\":\"\"},{\"value\":\"approved\",\"paramType\":\"0\",\"valueDescription\":\"\"},{\"value\":\"delivered\",\"paramType\":\"0\",\"valueDescription\":\"\"}]},{\"paramID\":\"bqKagnF1722433b37593cbdc4b689db02a8fee80fac2fba\",\"paramKey\":\"complete\",\"paramName\":null,\"paramNotNull\":\"1\",\"childList\":[],\"paramType\":\"8\",\"paramValueList\":[]}]",
@@ -18,7 +18,7 @@
       "projectID": 311862,
       "structureName": "Category",
       "structureDesc": null,
-      "updateTime": "2021-09-28 11:39:19",
+      "updateTime": "2021-12-17 18:13:58",
       "createUserID": 212216,
       "updateUserID": 212216,
       "structureData": "[{\"paramID\":\"hcAYNs7f26f762e1e0563c501cd07b6069003f7626658be\",\"paramKey\":\"id\",\"paramName\":null,\"paramNotNull\":\"1\",\"childList\":[],\"paramType\":\"3\",\"paramValueList\":[]},{\"paramID\":\"JUxxI7Ae0deaf00b9626a2619a2be2d84f0921675df9809\",\"paramKey\":\"name\",\"paramName\":null,\"paramNotNull\":\"1\",\"childList\":[],\"paramType\":\"0\",\"paramValueList\":[]}]",
@@ -31,7 +31,7 @@
       "projectID": 311862,
       "structureName": "User",
       "structureDesc": null,
-      "updateTime": "2021-11-27 10:40:10",
+      "updateTime": "2021-12-20 22:49:54",
       "createUserID": 212216,
       "updateUserID": 212216,
       "structureData": "[{\"paramKey\":\"id\",\"paramName\":null,\"paramNotNull\":\"1\",\"childList\":[],\"paramType\":\"3\",\"paramValueList\":[],\"paramID\":\"8LBLDd83f87398c8946e91ab232b11432fb722edbc06e7a\"},{\"paramKey\":\"username\",\"paramName\":null,\"paramNotNull\":\"1\",\"childList\":[],\"paramType\":\"0\",\"paramValueList\":[],\"paramID\":\"DpTiUVg0fc5fd61d79d98c19fb147c71d0537f8a6f1d881\"},{\"paramKey\":\"firstName\",\"paramName\":null,\"paramNotNull\":\"1\",\"childList\":[],\"paramType\":\"0\",\"paramValueList\":[],\"paramID\":\"HlBUfeReba07e3896e9052cc59e4aca8a1f9ffdbf09ebff\"},{\"paramKey\":\"lastName\",\"paramName\":null,\"paramNotNull\":\"1\",\"childList\":[],\"paramType\":\"0\",\"paramValueList\":[],\"paramID\":\"YbdGRjsecec5f7532b51286f4977fcf92271dd79d492aa6\"},{\"paramKey\":\"email\",\"paramName\":null,\"paramNotNull\":\"1\",\"childList\":[],\"paramType\":\"0\",\"paramValueList\":[],\"paramID\":\"5cIhn7n452edff62377f17fe7afb50f9167aaa67d28d54d\"},{\"paramKey\":\"password\",\"paramName\":null,\"paramNotNull\":\"1\",\"childList\":[],\"paramType\":\"0\",\"paramValueList\":[],\"paramID\":\"NjYXhjff7b8d1970af293ca1f9a5ee329e12621d0de5757\"},{\"paramKey\":\"phone\",\"paramName\":null,\"paramNotNull\":\"1\",\"childList\":[],\"paramType\":\"0\",\"paramValueList\":[],\"paramID\":\"7nJ8THQ4eedd8052910a7dd7ae2edf9b6a2bdcfd14cf74c\"}]",
@@ -57,7 +57,7 @@
       "projectID": 311862,
       "structureName": "Pet",
       "structureDesc": null,
-      "updateTime": "2021-11-25 15:43:58",
+      "updateTime": "2021-12-20 16:07:44",
       "createUserID": 212216,
       "updateUserID": 212216,
       "structureData": "[{\"paramID\":\"2WmWKvabae73fd1b481059873f4cda179d65e82b50f542f\",\"paramKey\":\"id\",\"paramName\":null,\"paramNotNull\":\"1\",\"childList\":[],\"paramType\":\"3\",\"paramValueList\":[]},{\"paramID\":\"8T6eccf47b582417e49a195c4933d04f3cd87ee3216a4ca\",\"paramKey\":\"category\",\"paramName\":null,\"paramNotNull\":\"1\",\"childList\":[{\"structureID\":358063,\"childList\":[],\"updateData\":[]}],\"paramType\":\"13\"},{\"paramID\":\"jPAVeZ59af476c6a82bfa60c0bb6dcdee9533f1bb329915\",\"paramKey\":\"name\",\"paramName\":null,\"paramNotNull\":\"0\",\"paramValue\":\"doggie\",\"childList\":[],\"paramType\":\"0\",\"paramValueList\":[]},{\"paramID\":\"z3tsDu67f3f61edd01776dd8426876cefdfdb068d631cdf\",\"paramKey\":\"photoUrls\",\"paramName\":null,\"paramNotNull\":\"0\",\"childList\":[],\"paramType\":\"12\",\"paramValueList\":[]},{\"paramID\":\"XCHQifC230c85545d3c09685a7aa3f6c8702fd55011c829\",\"paramKey\":\"tags\",\"paramName\":null,\"paramNotNull\":\"1\",\"childList\":[{\"structureID\":358065,\"childList\":[],\"updateData\":[]}],\"paramType\":\"12\"},{\"paramID\":\"L8YBc3je60ad4e205d75ba4523048daea90bc6776ce55f7\",\"paramKey\":\"status\",\"paramName\":\"pet status in the store\",\"paramNotNull\":\"1\",\"childList\":[],\"paramType\":\"0\",\"paramValueList\":[{\"value\":\"available\",\"paramType\":\"0\",\"valueDescription\":\"\"},{\"value\":\"pending\",\"paramType\":\"0\",\"valueDescription\":\"\"},{\"value\":\"sold\",\"paramType\":\"0\",\"valueDescription\":\"\"}]}]",
@@ -129,7 +129,7 @@
   "projectInfo": {
     "projectName": "test-eolinker",
     "projectType": 0,
-    "projectUpdateTime": "2021-11-29 20:12:11",
+    "projectUpdateTime": "2021-12-20 23:49:22",
     "projectVersion": "0.0.1",
     "projectDesc": "\u6d4b\u8bd5EoLinker",
     "mockApiSetting": "{\"requestTypeCheck\":1,\"requestParamCheck\":0,\"mockAutoRefresh\":1,\"requestHeaderCheck\":0}",
@@ -164,7 +164,7 @@
             "apiRequestParamType": 2,
             "apiRequestParamJsonType": 0,
             "apiRequestRaw": "",
-            "apiUpdateTime": "2021-11-29 20:12:29",
+            "apiUpdateTime": "2021-12-20 23:49:41",
             "updateUserID": 212216,
             "createUserID": 212216,
             "beforeInject": null,
@@ -239,7 +239,7 @@
             "apiRequestParamType": 2,
             "apiRequestParamJsonType": 0,
             "apiRequestRaw": "",
-            "apiUpdateTime": "2021-11-29 20:12:29",
+            "apiUpdateTime": "2021-12-20 23:49:41",
             "updateUserID": 212216,
             "createUserID": 212216,
             "beforeInject": null,
@@ -316,7 +316,7 @@
             "apiRequestParamType": 2,
             "apiRequestParamJsonType": 1,
             "apiRequestRaw": "",
-            "apiUpdateTime": "2021-11-29 20:12:29",
+            "apiUpdateTime": "2021-12-20 23:49:41",
             "updateUserID": 212216,
             "createUserID": 212216,
             "beforeInject": null,
@@ -386,7 +386,7 @@
             "apiRequestParamType": 2,
             "apiRequestParamJsonType": 1,
             "apiRequestRaw": "",
-            "apiUpdateTime": "2021-11-29 20:12:29",
+            "apiUpdateTime": "2021-12-20 23:49:41",
             "updateUserID": 212216,
             "createUserID": 212216,
             "beforeInject": null,
@@ -456,7 +456,7 @@
             "apiRequestParamType": 0,
             "apiRequestParamJsonType": 0,
             "apiRequestRaw": "",
-            "apiUpdateTime": "2021-11-29 20:12:29",
+            "apiUpdateTime": "2021-12-20 23:49:41",
             "updateUserID": 212216,
             "createUserID": 212216,
             "beforeInject": null,
@@ -533,7 +533,7 @@
             "apiRequestParamType": 0,
             "apiRequestParamJsonType": 0,
             "apiRequestRaw": "",
-            "apiUpdateTime": "2021-11-29 20:12:29",
+            "apiUpdateTime": "2021-12-20 23:49:41",
             "updateUserID": 212216,
             "createUserID": 212216,
             "beforeInject": null,
@@ -610,7 +610,7 @@
             "apiRequestParamType": 0,
             "apiRequestParamJsonType": 0,
             "apiRequestRaw": "",
-            "apiUpdateTime": "2021-11-29 20:12:29",
+            "apiUpdateTime": "2021-12-20 23:49:41",
             "updateUserID": 212216,
             "createUserID": 212216,
             "beforeInject": null,
@@ -689,7 +689,7 @@
             "apiRequestParamType": 0,
             "apiRequestParamJsonType": 0,
             "apiRequestRaw": "",
-            "apiUpdateTime": "2021-11-29 20:12:29",
+            "apiUpdateTime": "2021-12-20 23:49:41",
             "updateUserID": 212216,
             "createUserID": 212216,
             "beforeInject": null,
@@ -768,7 +768,7 @@
             "apiRequestParamType": 0,
             "apiRequestParamJsonType": 0,
             "apiRequestRaw": "",
-            "apiUpdateTime": "2021-11-29 20:12:29",
+            "apiUpdateTime": "2021-12-20 23:49:41",
             "updateUserID": 212216,
             "createUserID": 212216,
             "beforeInject": null,
@@ -847,7 +847,7 @@
             "apiRequestParamType": 0,
             "apiRequestParamJsonType": 0,
             "apiRequestRaw": "",
-            "apiUpdateTime": "2021-11-29 20:12:29",
+            "apiUpdateTime": "2021-12-20 23:49:41",
             "updateUserID": 212216,
             "createUserID": 212216,
             "beforeInject": null,
@@ -926,7 +926,7 @@
             "apiRequestParamType": 0,
             "apiRequestParamJsonType": 0,
             "apiRequestRaw": "",
-            "apiUpdateTime": "2021-11-29 20:12:29",
+            "apiUpdateTime": "2021-12-20 23:49:41",
             "updateUserID": 212216,
             "createUserID": 212216,
             "beforeInject": null,
@@ -1005,7 +1005,7 @@
             "apiRequestParamType": 0,
             "apiRequestParamJsonType": 0,
             "apiRequestRaw": "",
-            "apiUpdateTime": "2021-11-29 20:12:29",
+            "apiUpdateTime": "2021-12-20 23:49:41",
             "updateUserID": 212216,
             "createUserID": 212216,
             "beforeInject": null,
@@ -1084,7 +1084,7 @@
             "apiRequestParamType": 0,
             "apiRequestParamJsonType": 0,
             "apiRequestRaw": "",
-            "apiUpdateTime": "2021-11-29 20:12:29",
+            "apiUpdateTime": "2021-12-20 23:49:41",
             "updateUserID": 212216,
             "createUserID": 212216,
             "beforeInject": null,
@@ -1152,7 +1152,7 @@
             "apiRequestParamType": 0,
             "apiRequestParamJsonType": 0,
             "apiRequestRaw": "",
-            "apiUpdateTime": "2021-11-29 20:12:29",
+            "apiUpdateTime": "2021-12-20 23:49:41",
             "updateUserID": 212216,
             "createUserID": 212216,
             "beforeInject": null,
@@ -1237,7 +1237,7 @@
             "apiRequestParamType": 2,
             "apiRequestParamJsonType": 0,
             "apiRequestRaw": "",
-            "apiUpdateTime": "2021-11-29 20:12:29",
+            "apiUpdateTime": "2021-12-20 23:49:41",
             "updateUserID": 212216,
             "createUserID": 212216,
             "beforeInject": null,
@@ -1316,7 +1316,7 @@
             "apiRequestParamType": 0,
             "apiRequestParamJsonType": 0,
             "apiRequestRaw": "",
-            "apiUpdateTime": "2021-11-29 20:12:29",
+            "apiUpdateTime": "2021-12-20 23:49:41",
             "updateUserID": 212216,
             "createUserID": 212216,
             "beforeInject": null,
@@ -1384,7 +1384,7 @@
             "apiRequestParamType": 2,
             "apiRequestParamJsonType": 0,
             "apiRequestRaw": "",
-            "apiUpdateTime": "2021-11-29 20:12:29",
+            "apiUpdateTime": "2021-12-20 23:49:41",
             "updateUserID": 212216,
             "createUserID": 212216,
             "beforeInject": null,
@@ -1459,7 +1459,7 @@
             "apiRequestParamType": 2,
             "apiRequestParamJsonType": 0,
             "apiRequestRaw": "",
-            "apiUpdateTime": "2021-11-29 20:12:29",
+            "apiUpdateTime": "2021-12-20 23:49:41",
             "updateUserID": 212216,
             "createUserID": 212216,
             "beforeInject": null,
@@ -1545,7 +1545,7 @@
             "apiRequestParamType": 0,
             "apiRequestParamJsonType": 0,
             "apiRequestRaw": "",
-            "apiUpdateTime": "2021-11-29 20:12:29",
+            "apiUpdateTime": "2021-12-20 23:49:41",
             "updateUserID": 212216,
             "createUserID": 212216,
             "beforeInject": null,
@@ -1639,7 +1639,7 @@
             "apiRequestParamType": 0,
             "apiRequestParamJsonType": 0,
             "apiRequestRaw": "",
-            "apiUpdateTime": "2021-11-29 20:12:29",
+            "apiUpdateTime": "2021-12-20 23:49:41",
             "updateUserID": 212216,
             "createUserID": 212216,
             "beforeInject": null,
@@ -1740,7 +1740,7 @@
             "beforeInject": null,
             "afterInject": null,
             "createTime": null,
-            "apiUpdateTime": "2021-11-29 20:12:29",
+            "apiUpdateTime": "2021-12-20 23:49:41",
             "apiTag": ""
           },
           "responseHeader": [],
@@ -2302,8 +2302,8 @@
                 },
                 {
                   "baseInfo": {
-                    "apiName": "tt-child-child-chi-api",
-                    "apiURI": "/tt-child-child-chi",
+                    "apiName": "tt-child-child-chil-api",
+                    "apiURI": "/tt-child-child-chil",
                     "apiProtocol": 0,
                     "apiSuccessMock": "",
                     "apiFailureMock": "",
@@ -2423,7 +2423,7 @@
                         "beforeInject": "",
                         "afterInject": "",
                         "createTime": "2021-11-24 20:45:21",
-                        "apiUpdateTime": "2021-11-29 20:12:11",
+                        "apiUpdateTime": "2021-12-20 23:49:22",
                         "apiTag": ""
                       },
                       "responseHeader": [],
@@ -2439,179 +2439,6 @@
                           "paramLimit": "string",
                           "paramNote": "",
                           "paramValueList": [],
-                          "default": 0,
-                          "childList": []
-                        },
-                        {
-                          "paramNotNull": "0",
-                          "paramType": 358064,
-                          "paramName": "",
-                          "paramKey": "a",
-                          "paramValue": "",
-                          "paramLimit": "",
-                          "paramNote": "",
-                          "paramValueList": [],
-                          "default": 0,
-                          "childList": []
-                        },
-                        {
-                          "paramNotNull": "0",
-                          "paramType": 443820,
-                          "paramName": "",
-                          "paramKey": "b",
-                          "paramValue": "",
-                          "paramLimit": "",
-                          "paramNote": "",
-                          "paramValueList": [],
-                          "default": 0,
-                          "childList": []
-                        },
-                        {
-                          "paramNotNull": "0",
-                          "paramType": "0",
-                          "paramName": "",
-                          "paramKey": "d",
-                          "paramValue": "",
-                          "paramLimit": "",
-                          "paramNote": "",
-                          "paramValueList": [
-                            {
-                              "value": "1",
-                              "valueDescription": "",
-                              "paramType": "0",
-                              "radio": true
-                            },
-                            {
-                              "value": "2",
-                              "valueDescription": "",
-                              "paramType": "0"
-                            },
-                            {
-                              "value": "true",
-                              "valueDescription": "",
-                              "paramType": "8"
-                            },
-                            {
-                              "value": "false",
-                              "valueDescription": "",
-                              "paramType": "8"
-                            }
-                          ],
-                          "default": 0,
-                          "childList": []
-                        },
-                        {
-                          "paramNotNull": "0",
-                          "paramType": 358066,
-                          "paramName": "",
-                          "paramKey": "list",
-                          "paramValue": "",
-                          "paramLimit": "",
-                          "paramNote": "",
-                          "paramValueList": [],
-                          "default": 0,
-                          "childList": []
-                        },
-                        {
-                          "paramNotNull": "0",
-                          "paramType": "12",
-                          "paramName": "",
-                          "paramKey": "array",
-                          "paramValue": "",
-                          "paramLimit": "",
-                          "paramNote": "",
-                          "paramValueList": [],
-                          "default": 0,
-                          "childList": [
-                            {
-                              "paramNotNull": "0",
-                              "paramType": "0",
-                              "paramName": "",
-                              "paramKey": "a",
-                              "paramValue": "",
-                              "paramLimit": "",
-                              "paramNote": "",
-                              "paramValueList": [],
-                              "default": 0,
-                              "childList": []
-                            },
-                            {
-                              "paramNotNull": "0",
-                              "paramType": "3",
-                              "paramName": "",
-                              "paramKey": "c",
-                              "paramValue": "",
-                              "paramLimit": "",
-                              "paramNote": "",
-                              "paramValueList": [],
-                              "default": 0,
-                              "childList": []
-                            },
-                            {
-                              "paramNotNull": "0",
-                              "paramType": "8",
-                              "paramName": "",
-                              "paramKey": "b",
-                              "paramValue": "",
-                              "paramLimit": "",
-                              "paramNote": "",
-                              "paramValueList": [],
-                              "default": 0,
-                              "childList": []
-                            }
-                          ]
-                        },
-                        {
-                          "paramNotNull": "0",
-                          "paramType": "0",
-                          "paramName": "",
-                          "paramKey": "enum",
-                          "paramValue": "",
-                          "paramLimit": "{\"rule\": \"+1\" }",
-                          "paramNote": "",
-                          "paramValueList": [
-                            {
-                              "value": "a",
-                              "valueDescription": "",
-                              "paramType": "0",
-                              "radio": true
-                            },
-                            {
-                              "value": "b",
-                              "valueDescription": "",
-                              "paramType": "0"
-                            },
-                            {
-                              "value": "c",
-                              "valueDescription": "",
-                              "paramType": "0"
-                            },
-                            {
-                              "value": "d",
-                              "valueDescription": "",
-                              "paramType": "0"
-                            },
-                            {
-                              "value": "1",
-                              "valueDescription": "",
-                              "paramType": "3"
-                            },
-                            {
-                              "value": "2",
-                              "valueDescription": "",
-                              "paramType": "5"
-                            },
-                            {
-                              "value": "3",
-                              "valueDescription": "",
-                              "paramType": "4"
-                            },
-                            {
-                              "value": "e",
-                              "valueDescription": "",
-                              "paramType": "0"
-                            }
-                          ],
                           "default": 0,
                           "childList": []
                         }
@@ -2811,6 +2638,30 @@
                               "value": "e",
                               "valueDescription": "",
                               "paramType": "0"
+                            }
+                          ],
+                          "default": 0,
+                          "childList": []
+                        },
+                        {
+                          "paramNotNull": "0",
+                          "paramType": "13",
+                          "paramName": "",
+                          "paramKey": "obj",
+                          "paramValue": "",
+                          "paramLimit": "",
+                          "paramNote": "",
+                          "paramValueList": [
+                            {
+                              "value": "a",
+                              "valueDescription": "@string(0,2)",
+                              "paramType": "13",
+                              "radio": true
+                            },
+                            {
+                              "value": "ab",
+                              "valueDescription": "@date()",
+                              "paramType": "13"
                             }
                           ],
                           "default": 0,
