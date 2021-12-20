@@ -12,6 +12,9 @@ function normalizeParamType(schema, structMap) {
   if (structMap.has(paramType)) {
     const { type, struct } = structMap.get(paramType);
     schema.childList = struct;
+    // array => array
+    // formData, json, xml, object => object
+    // enum => enum
     schema.paramType = TYPE.matchKey(type, "object").value;
     return TYPE.matchValue(schema.paramType)?.key;
   }

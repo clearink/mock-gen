@@ -1,4 +1,3 @@
-const renderJoiEnum = require("./utils/render_joi_enum");
 const {
   API_REQUEST_PARAM_TYPE: TYPE,
   API_PARAM_REQUIRED,
@@ -8,6 +7,7 @@ const {
   normalizeParam,
   normalizeParamType,
 } = require("../utils");
+const renderJoiEnum = require("./utils/render_joi_enum");
 
 /**
  * @description 解析配置得到 joi 数据 **暂时不处理 headers 参数**
@@ -62,6 +62,7 @@ function generateJoi(schemaList, structMap, apiConfig, strict = false) {
  * @param {boolean} strict 是否精确匹配类型
  */
 function schemaToJoi(schema, structMap, apiConfig, strict = false) {
+  
   // 获取参数的类型字符串 同时处理自定义数据结构
   const type = normalizeParamType(schema, structMap);
 
