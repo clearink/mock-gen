@@ -1,6 +1,6 @@
 const path = require("path");
 const fs = require("fs/promises");
-const chalk = require("chalk");
+const logger = require("../../utils/logger");
 /**
  * @description 创建文件夹
  * @param {string} filePath
@@ -15,7 +15,7 @@ async function createFolder(filePath, uri) {
       .catch(() => fs.mkdir(dirName, { recursive: true }));
     return true;
   } catch (error) {
-    console.log(chalk.red(`❌ 文件创建失败：${uri}`));
+    logger.error(`❌ 文件创建失败：${uri}`);
     return false;
   }
 }

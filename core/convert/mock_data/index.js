@@ -32,7 +32,8 @@ function generateMock(schemaList, structMap, apiConfig) {
       return { ...result, ...generateMock(struct, structMap, apiConfig) };
     }
     const { rule, content } = schemaToMock(schema, structMap, apiConfig);
-    const paramKey = `${schema.paramKey}${rule ? `|${rule}` : ""}`;
+    const suffix = rule ? `|${rule}` : "";
+    const paramKey = `${schema.paramKey}${suffix}`.replace(/\s/g, "");
     return { ...result, [paramKey]: content };
   }, {});
 }

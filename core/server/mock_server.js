@@ -5,7 +5,7 @@ const Koa = require("koa");
 const Router = require("koa-router");
 const bodyParser = require("koa-bodyparser");
 const cors = require("koa2-cors");
-const chalk = require("chalk");
+const logger = require("../utils/logger");
 const { unique } = require("./utils");
 const { API_REQUEST_TYPE } = require("../constant");
 
@@ -15,7 +15,7 @@ class Server {
   constructor(config) {
     const { port } = { port: 4000, ...config };
     this.app.listen(port, () => {
-      console.log(chalk.green(`🚀 mock server at http://localhost:${port}/`));
+      logger.success(`🚀 mock server at http://localhost:${port}/`);
     });
     this.app
       .use(cors({ origin: "*" })) // 设置跨域

@@ -1,5 +1,5 @@
-const chalk = require("chalk");
 const { API_REQUEST_PARAM_TYPE: TYPE } = require("../../constant");
+const logger = require("../../utils/logger");
 /**
  * @description 获取字段枚举值 不允许 array object 自定义数据结构
  * @param {Map} structMap 结构体 map
@@ -17,11 +17,11 @@ function generateEnum(structMap, array = [], shouldGenerate = true) {
     // 值为空 直接返回
     if (!value) return pre;
     if (structMap.has(paramType)) {
-      console.log(chalk.redBright("枚举值暂不支持自定义结构体"));
+      logger.warning("枚举值暂不支持自定义结构体");
       return pre;
     }
 
-    const type = TYPE.matchValue(paramType, 'string').key; // 默认为 string
+    const type = TYPE.matchValue(paramType, "string").key; // 默认为 string
     switch (type) {
       case "string":
       case "char":
@@ -47,7 +47,7 @@ function generateEnum(structMap, array = [], shouldGenerate = true) {
       case "json":
       case "object":
         // 复杂类型 直接返回
-        console.log(chalk.redBright(`枚举值暂不支持${type}类型`));
+        logger.error(`枚举值暂不支持${type}类型`);
         return pre;
       default:
         return pre;

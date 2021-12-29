@@ -33,7 +33,7 @@ function convertToTs(apiConfig, structMap) {
  */
 function generateTs(schemaList, structMap, apiConfig) {
   return normalizeParam(schemaList).reduce((result, schema) => {
-    const { structureID, paramNotNull, paramKey } = schema;
+    const { structureID, paramNotNull } = schema;
     if (schema.hasOwnProperty("structureID")) {
       const struct = structMap.get(structureID)?.struct;
       if (!struct) return result;
@@ -45,8 +45,8 @@ function generateTs(schemaList, structMap, apiConfig) {
     };
     // 是否为必填项
     const suffix = API_PARAM_REQUIRED.when(paramNotNull, "required") ? "" : "?";
-
-    return { ...result, [`${paramKey}${suffix}`]: content };
+    const paramKey = `${schema.paramKey}${suffix}`.replace(/\s/g, "");
+    return { ...result, [paramKey]: content };
   }, {});
 }
 
@@ -64,6 +64,7 @@ function schemaToTs(schema, structMap, apiConfig) {
   const shouldGenerate = judgeGenerateEnum(schema, structMap, apiConfig, {
     matchType: "ts",
   });
+
   if (shouldGenerate !== false) {
     return renderTsEnum(shouldGenerate.tsContent, type);
   }

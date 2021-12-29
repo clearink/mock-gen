@@ -1,7 +1,6 @@
 const fs = require("fs/promises");
-const chalk = require("chalk");
 const ejs = require("ejs");
-const prettier = require("prettier");
+const logger = require("../utils/logger");
 const { convertToTs } = require("../convert");
 const { tsConfig = {} } = require("../config");
 const { API_REQUEST_TYPE } = require("../constant");
@@ -35,16 +34,10 @@ async function handleWriteFile({ apiConfig, isAppend, path, data }) {
     uri: baseInfo.apiURI,
   });
 
-  let formatted = fileData;
-  try {
-    formatted = prettier.format(fileData, {
-      tabWidth: 4,
-      filepath: path.filePath,
-    });
-  } catch (error) {
-    console.log(chalk.redBright(`❌ 文件格式化失败 请检查：${path.filePath}`));
-  }
-  await fs[isAppend ? "appendFile" : "writeFile"](path.filePath, formatted);
+  await fs[isAppend ? "appendFile" : "writeFile"](
+    path.filePath,
+    normalizeFileData(fileData, path.filePath)
+  );
 }
 /**
  * @description 生成 ts 文件
@@ -64,7 +57,8 @@ async function generatorTsFile(apiGroup, structMap) {
     // 创建文件夹
     const createSuccess = await createFolder(filePath, baseInfo.apiURI);
     if (!createSuccess) continue;
-    console.log(chalk.green(`✌  ts 文件准备生成: ${filePath}`));
+
+    logger.info(`✌ 正在生成 ts 文件: ${filePath}`);
 
     // 生成文件
     await handleWriteFile({

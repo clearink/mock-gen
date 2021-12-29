@@ -23,7 +23,11 @@ function normalizeParam(schemaList = []) {
       }
       $schemaList = schemaItem.childList;
     }
-    $schemaList.push({ ...$schema, paramKey: attrList.shift() });
+    const paramKey = attrList.shift();
+    // 不存在才新增 避免多次操作重复添加
+    if (!$schemaList.find((item) => item.paramKey === paramKey)) {
+      $schemaList.push({ ...$schema, paramKey });
+    }
   }
   return schemaList.filter(normalizeFilter);
 }

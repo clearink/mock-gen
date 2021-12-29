@@ -1,9 +1,9 @@
 const path = require("path");
 const chokidar = require("chokidar");
 const glob = require("glob");
-const chalk = require("chalk");
 const MockServer = require("./mock_server");
 const { debounce } = require("./utils");
+const logger = require("../utils/logger");
 
 class HttpMockServerPlugin {
   constructor(_config = {}) {
@@ -56,5 +56,5 @@ module.exports = HttpMockServerPlugin;
 // 发生错误不退出进程
 process.on("uncaughtException", function (err) {
   //打印出错误的调用栈方便调试
-  console.log(chalk.red(err.stack));
+  logger.error(err.stack);
 });

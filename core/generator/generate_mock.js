@@ -1,15 +1,15 @@
 const fs = require("fs/promises");
-const chalk = require("chalk");
 const ejs = require("ejs");
-const prettier = require("prettier");
+const logger = require("../utils/logger");
 const { mockConfig = {} } = require("../config");
 const { convertToMock, convertToJoi } = require("../convert");
 const { API_REQUEST_TYPE, RESULT_PARAM_JSON_TYPE } = require("../constant");
 const {
+  joiToString,
+  createFolder,
   shouldGenerateApi,
   normalizeFilePath,
-  createFolder,
-  joiToString,
+  normalizeFileData,
 } = require("./utils");
 
 // 是否已经写入过该文件 适配同一个url 不同的 method
@@ -37,16 +37,10 @@ async function handleWriteFile({ apiConfig, isAppend, path, data }) {
     arrayRoot,
   });
 
-  let formatted = fileData;
-  try {
-    formatted = prettier.format(fileData, {
-      tabWidth: 4,
-      filepath: path.filePath,
-    });
-  } catch (error) {
-    console.log(chalk.redBright(`❌ 文件格式化失败 请检查：${path.filePath}`));
-  }
-  await fs[isAppend ? "appendFile" : "writeFile"](path.filePath, formatted);
+  await fs[isAppend ? "appendFile" : "writeFile"](
+    path.filePath,
+    normalizeFileData(fileData, path.filePath)
+  );
 }
 /**
  * @description 生成 mock 数据文件
@@ -71,8 +65,9 @@ async function generatorMockFile(apiGroup, structMap) {
 
     // 生成 joi 数据
     const joiData = convertToJoi(apiConfig, structMap);
-    
-    console.log(chalk.green(`✌  mock 文件准备生成: ${filePath}`));
+
+    logger.info(`✌ 正在生成 mock 文件: ${filePath}`);
+
     // 生成文件
     await handleWriteFile({
       apiConfig,

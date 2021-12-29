@@ -1,4 +1,3 @@
-const renderJoiEnum = require("./utils/render_joi_enum");
 const {
   API_REQUEST_PARAM_TYPE: TYPE,
   API_PARAM_REQUIRED,
@@ -8,6 +7,7 @@ const {
   normalizeParam,
   normalizeParamType,
 } = require("../utils");
+const renderJoiEnum = require("./utils/render_joi_enum");
 
 /**
  * @description 解析配置得到 joi 数据 **暂时不处理 headers 参数**
@@ -33,7 +33,7 @@ function convertToJoi(apiConfig, structMap) {
  */
 function generateJoi(schemaList, structMap, apiConfig, strict = false) {
   return normalizeParam(schemaList).reduce((result, schema) => {
-    const { paramKey, structureID, paramNotNull, paramType } = schema;
+    const { structureID, paramNotNull, paramType } = schema;
     if (schema.hasOwnProperty("structureID")) {
       const struct = structMap.get(structureID)?.struct;
       if (!struct) return result;
@@ -49,7 +49,7 @@ function generateJoi(schemaList, structMap, apiConfig, strict = false) {
 
     if (required && (stringType || !strict)) content.push(".allow('')");
     if (required) content.push(".required()");
-
+    const paramKey = schema.paramKey.replace(/\s/g, "");
     return { ...result, [paramKey]: ["joi."].concat(content) };
   }, {});
 }

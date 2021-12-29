@@ -221,6 +221,367 @@
         },
         {
           "baseInfo": {
+            "apiName": "项目里程碑设定列表",
+            "apiURI": "/pms/v1/milestone/milestone-setting-list",
+            "apiProtocol": 0,
+            "apiSuccessMock": "",
+            "apiFailureMock": "",
+            "apiRequestType": 0,
+            "apiStatus": 0,
+            "starred": 1,
+            "apiNoteType": 0,
+            "apiNoteRaw": "",
+            "apiNote": "",
+            "apiRequestParamType": 0,
+            "apiRequestRaw": "",
+            "apiUpdateTime": "2021-12-29 10:55:47",
+            "apiFailureStatusCode": "200",
+            "apiSuccessStatusCode": "200",
+            "beforeInject": null,
+            "afterInject": null,
+            "updateUserID": 136,
+            "createUserID": 136,
+            "apiFailureContentType": "text/html; charset=UTF-8",
+            "apiSuccessContentType": "text/html; charset=UTF-8",
+            "createTime": null,
+            "apiTag": ""
+          },
+          "headerInfo": [],
+          "requestInfo": [
+            {
+              "paramNotNull": "0",
+              "paramType": "0",
+              "paramName": "项目id",
+              "paramKey": "project_id",
+              "paramValue": "",
+              "paramLimit": "",
+              "paramNote": "",
+              "paramValueList": [],
+              "default": 0,
+              "$index": 0
+            }
+          ],
+          "resultInfo": [
+            {
+              "paramNotNull": "0",
+              "paramName": "状态码",
+              "paramKey": "code",
+              "paramType": "0",
+              "paramValueList": [],
+              "$index": 0,
+              "type": "0"
+            },
+            {
+              "paramNotNull": "0",
+              "paramName": "失败消息",
+              "paramKey": "message",
+              "paramType": "0",
+              "paramValueList": [],
+              "$index": 1,
+              "type": "0"
+            },
+            {
+              "paramNotNull": "0",
+              "paramName": "数据对象",
+              "paramKey": "data",
+              "paramType": "13",
+              "paramValueList": [],
+              "$index": 2,
+              "type": "0"
+            },
+            {
+              "paramNotNull": "0",
+              "paramName": "记录总数",
+              "paramKey": "data>>total",
+              "paramType": "0",
+              "paramValueList": [],
+              "$index": 3,
+              "type": "0"
+            },
+            {
+              "paramNotNull": "0",
+              "paramName": "数据列表",
+              "paramKey": "data>>list",
+              "paramType": "0",
+              "paramValueList": [],
+              "$index": 4,
+              "type": "0"
+            },
+            {
+              "paramNotNull": "0",
+              "paramName": "项目里程碑id",
+              "paramKey": "data>>list>>project_milestone_id",
+              "paramType": "0",
+              "paramValueList": [],
+              "$index": 5,
+              "type": "0"
+            },
+            {
+              "paramNotNull": "0",
+              "paramName": "全局里程碑模板id（项目自身的里程碑，没有这个值）",
+              "paramKey": "data>>list>>milestone_id",
+              "paramType": "0",
+              "paramValueList": [],
+              "$index": 6,
+              "type": "0"
+            },
+            {
+              "paramNotNull": "0",
+              "paramName": "里程碑名",
+              "paramKey": "data>>list>>milestone_name",
+              "paramType": "0",
+              "paramValueList": [],
+              "$index": 7,
+              "type": "0"
+            },
+            {
+              "paramNotNull": "0",
+              "paramName": "里程碑说明",
+              "paramKey": "data>>list>>milestone_desc",
+              "paramType": "0",
+              "paramValueList": [],
+              "$index": 8,
+              "type": "0"
+            },
+            {
+              "paramNotNull": "0",
+              "paramName": "交付模板信息",
+              "paramKey": "data>>list>>template_info",
+              "paramType": "12",
+              "paramValueList": [],
+              "$index": 9,
+              "type": "0"
+            },
+            {
+              "paramNotNull": "0",
+              "paramName": "交付模板id",
+              "paramKey": "data>>list>>template_info>>template_id",
+              "paramType": "0",
+              "paramValueList": [],
+              "$index": 10,
+              "type": "0"
+            },
+            {
+              "paramNotNull": "0",
+              "paramName": "交付模板说明",
+              "paramKey": "data>>list>>template_info>> template_desc",
+              "paramType": "0",
+              "paramValueList": [],
+              "$index": 11,
+              "type": "0"
+            },
+            {
+              "paramNotNull": "0",
+              "paramName": "模板附件下载url",
+              "paramKey": "data>>list>>template_info>>url",
+              "paramType": "0",
+              "paramValueList": [],
+              "$index": 12,
+              "type": "0"
+            },
+            {
+              "paramNotNull": "0",
+              "paramName": "模板附件名",
+              "paramKey": "data>>list>>template_info>> name",
+              "paramType": "0",
+              "paramValueList": [],
+              "$index": 13,
+              "type": "0"
+            },
+            {
+              "paramNotNull": "0",
+              "paramName": "模板附件id",
+              "paramKey": "data>>list>>template_info>>attachment_id",
+              "paramType": "0",
+              "paramValueList": [],
+              "$index": 14,
+              "type": "0"
+            },
+            {
+              "paramNotNull": "0",
+              "paramName": "里程编辑历史",
+              "paramKey": "data>>list>>modify",
+              "paramType": "3",
+              "paramValueList": [
+                {
+                  "value": "",
+                  "valueDescription": ""
+                }
+              ],
+              "$index": 15,
+              "type": "0"
+            },
+            {
+              "paramNotNull": "0",
+              "paramName": "计划关闭时间",
+              "paramKey": "data>>list>>plan_close_time",
+              "paramType": "3",
+              "paramValueList": [],
+              "$index": 16,
+              "type": "0"
+            },
+            {
+              "paramNotNull": "0",
+              "paramName": "关联工作数",
+              "paramKey": "data>>list>>related-work",
+              "paramType": "3",
+              "paramValueList": [],
+              "$index": 17,
+              "type": "0"
+            },
+            {
+              "paramNotNull": "0",
+              "paramName": "里程碑状态,  超时未关闭=1，未关闭=2，待区域评审=3、待总部评审=4，按时关闭=5，超时关闭=6，被驳回-7",
+              "paramKey": "data>>list>>status",
+              "paramType": "3",
+              "paramValueList": [],
+              "$index": 18,
+              "type": "0"
+            },
+            {
+              "paramNotNull": "0",
+              "paramName": "编辑权限（0-无，1-有）",
+              "paramKey": "data>>list>>ops_modify",
+              "paramType": "3",
+              "paramValueList": [],
+              "$index": 19,
+              "type": "0"
+            },
+            {
+              "paramNotNull": "0",
+              "paramName": "删除权限（0-无，1-有  2-有删除按钮，置灰-鼠标上移提示）",
+              "paramKey": "data>>list>>ops_delete",
+              "paramType": "3",
+              "paramValueList": [
+                {
+                  "value": "",
+                  "valueDescription": ""
+                }
+              ],
+              "$index": 20,
+              "type": "0"
+            },
+            {
+              "paramNotNull": "0",
+              "paramName": "关闭权限（0-无，1-有）",
+              "paramKey": "data>>list>>ops_close",
+              "paramType": "0",
+              "paramValueList": [],
+              "$index": 21,
+              "type": "0"
+            },
+            {
+              "paramNotNull": "0",
+              "paramName": "重新关闭权限（0-无，1-有）",
+              "paramKey": "data>>list>>ops_reclose",
+              "paramType": "0",
+              "paramValueList": [],
+              "$index": 22,
+              "type": "0"
+            },
+            {
+              "paramNotNull": "0",
+              "paramName": "关联工作权限（0-无，1-有）",
+              "paramKey": "data>>list>>ops_relate",
+              "paramType": "0",
+              "paramValueList": [],
+              "$index": 23,
+              "type": "0"
+            },
+            {
+              "paramNotNull": "0",
+              "paramName": "0=项目自身的，1=全局的",
+              "paramKey": "data>>list>>is_overall",
+              "paramType": "3",
+              "paramValueList": [],
+              "$index": 24,
+              "type": "0"
+            },
+            {
+              "paramNotNull": "0",
+              "paramName": "项目类型id",
+              "paramKey": "data>>project_type_id",
+              "paramType": "0",
+              "paramValueList": [],
+              "$index": 25,
+              "type": "0"
+            },
+            {
+              "paramNotNull": "0",
+              "paramName": "是否生效 0-未设定， 1-立即生效，2-已设定",
+              "paramKey": "data>>ops_efficient",
+              "paramType": "3",
+              "paramValueList": [],
+              "$index": 26,
+              "type": "0"
+            },
+            {
+              "paramNotNull": "0",
+              "paramName": "一键生效按钮权限（0-无，1-有）",
+              "paramKey": "data>>ops_effect",
+              "paramType": "3",
+              "paramValueList": [],
+              "$index": 27,
+              "type": "0"
+            },
+            {
+              "paramNotNull": "0",
+              "paramName": "新增里程碑权限（0-无，1-有）",
+              "paramKey": "data>>ops_add",
+              "paramType": "3",
+              "paramValueList": [],
+              "$index": 28,
+              "type": "0"
+            },
+            {
+              "paramNotNull": "0",
+              "paramName": "刷新里程碑，0为无，1为有",
+              "paramKey": "data>>ops_refresh",
+              "paramType": "3",
+              "paramValueList": [],
+              "$index": 29,
+              "type": "0"
+            },
+            {
+              "paramNotNull": "0",
+              "paramName": "提交里程碑审核按钮 0为无，1为有",
+              "paramKey": "data>>ops_submit_milestone",
+              "paramType": "3",
+              "paramValueList": [],
+              "$index": 30
+            }
+          ],
+          "apiType": "http",
+          "groupName": "里程碑监控",
+          "swaggerID": null,
+          "testCastList": [],
+          "mockExpectationList": [
+            {
+              "expectationID": 15076,
+              "projectID": 191,
+              "apiID": 19721,
+              "expectationName": "默认期望",
+              "triggerCondition": "[]",
+              "responseHttpCode": "200",
+              "responseDelay": "0.00",
+              "responseHeader": "[{\"headerName\":\"Content-type\",\"headerValue\":\"application\\/json; charset=UTF-8\"}]",
+              "responseBodySettingType": 0,
+              "mockConfig": "{\"rule\":\"\",\"type\":\"object\"}",
+              "mockRule": "[]",
+              "mockResult": "",
+              "creatorID": 136,
+              "updaterID": 136,
+              "updateTime": "2021-06-01 21:52:15",
+              "spaceID": 10,
+              "xmlDecl": null,
+              "mockStatus": "disable",
+              "createWay": "manualDrive",
+              "handledTrigger": "[]"
+            }
+          ]
+        },
+        {
+          "baseInfo": {
             "apiName": "Create user",
             "apiURI": "/v2/user",
             "apiProtocol": 0,

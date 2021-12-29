@@ -12,10 +12,13 @@ function normalizeParamType(schema, structMap) {
   if (structMap.has(paramType)) {
     const { type, struct } = structMap.get(paramType);
     schema.childList = struct;
+    // array => array
+    // formData, json, xml, object => object
+    // enum => enum
     schema.paramType = TYPE.matchKey(type, "object").value;
     return TYPE.matchValue(schema.paramType)?.key;
   }
-  
+
   // 如果 有子元素 且类型不是 json,object,array 默认修正为 object
   const complexType = ["json", "object", "array"];
   if (childList.length > 0 && !TYPE.when(paramType, complexType)) {

@@ -10,6 +10,7 @@ const judgeInclude = require("../../../utils/judge_include");
  */
 function normalizeParamLimit(paramLimit) {
   try {
+    if (!paramLimit) throw new Error("Empty ParamLimit");
     return eval(`(()=>(${paramLimit}))()`);
   } catch (error) {
     return { content: paramLimit };
