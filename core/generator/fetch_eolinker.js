@@ -1,5 +1,5 @@
-const fs = require("fs/promises");
 const ora = require("ora");
+const fs = require("fs/promises");
 const fetch = require("node-fetch");
 const config = require("../config") ?? {};
 const logger = require("../utils/logger");
@@ -12,7 +12,6 @@ const { filePath, spaceKey, projectHashKey, EOLINKER_URL, EO_SECRET_KEY } =
  */
 async function fetchEolinker() {
   const spinner = ora(logger.info("正在请求 api 数据", false)).start();
-
   try {
     const response = await fetch(EOLINKER_URL, {
       method: "POST",
@@ -24,15 +23,12 @@ async function fetchEolinker() {
     });
     const fileData = await response.json();
     await fs.writeFile(filePath, JSON.stringify(fileData));
-    const text = logger.success(`数据请求成功, 已存储到: ${filePath}`, false);
-    spinner.succeed(text);
+    const text = `数据请求成功, 已存储到: ${filePath}`;
+    spinner.succeed(logger.success(text, false));
     return true;
   } catch (error) {
-    const text = logger.error(
-      `数据请求失败, 请重试 \n ${error.toString()}`,
-      false
-    );
-    spinner.fail(text);
+    const text = `数据请求失败, 请重试 \n ${error.toString()}`;
+    spinner.fail(logger.error(text, false));
     return false;
   }
 }

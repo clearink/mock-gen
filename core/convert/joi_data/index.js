@@ -62,6 +62,7 @@ function generateJoi(schemaList, structMap, apiConfig, strict = false) {
  * @param {boolean} strict 是否精确匹配类型
  */
 function schemaToJoi(schema, structMap, apiConfig, strict = false) {
+  
   // 获取参数的类型字符串 同时处理自定义数据结构
   const type = normalizeParamType(schema, structMap);
 

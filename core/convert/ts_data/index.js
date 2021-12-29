@@ -57,6 +57,7 @@ function generateTs(schemaList, structMap, apiConfig) {
  * @param {object} apiConfig apiConfig 配置
  */
 function schemaToTs(schema, structMap, apiConfig) {
+  
   // 获取参数的类型字符串 同时处理自定义数据结构
   const type = normalizeParamType(schema, structMap);
 

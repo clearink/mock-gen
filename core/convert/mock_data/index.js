@@ -46,6 +46,7 @@ function generateMock(schemaList, structMap, apiConfig) {
  * @returns {{ rule:string, content:any }}
  */
 function schemaToMock(schema, structMap, apiConfig) {
+  
   // 获取参数的类型字符串 同时处理自定义数据结构
   const type = normalizeParamType(schema, structMap);
 
