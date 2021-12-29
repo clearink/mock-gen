@@ -1,3 +1,5 @@
+.vscode
+yarn.lock
 /node_modules/
 /mock/
-yarn.lock
+/src/ts/

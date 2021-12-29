@@ -23,21 +23,23 @@ const args = process.argv.slice(2).map((item) => item.toLowerCase());
   // 获得拍平后的 groupList;
   const groupList = flatGroupList(EOLINKER_JSON.apiGroupList);
 
-  // 生成mock文件
-  if (!args.includes("nomock")) {
-    const updateMockGroupList = findUpdateGroup(groupList, mockConfig);
-    (async () => {
-      for (const apiGroup of updateMockGroupList)
-        await generateMockFile(apiGroup, structMap);
-    })();
-  }
+  if (!args.includes("nomock")) generateMock(groupList, structMap);
 
-  // 生成 ts 文件
-  if (!args.includes("nots")) {
-    const updateTsGroupList = findUpdateGroup(groupList, tsConfig);
-    (async () => {
-      for (const apiGroup of updateTsGroupList)
-        await generateTsFile(apiGroup, structMap);
-    })();
-  }
+  if (!args.includes("nots")) generateTs(groupList, structMap);
 })();
+
+// 生成 mock
+async function generateMock(groupList, structMap) {
+  const updateMockGroupList = findUpdateGroup(groupList, mockConfig);
+  for (const apiGroup of updateMockGroupList) {
+    await generateMockFile(apiGroup, structMap);
+  }
+}
+
+// 生成 ts
+async function generateTs(groupList, structMap) {
+  const updateTsGroupList = findUpdateGroup(groupList, tsConfig);
+  for (const apiGroup of updateTsGroupList) {
+    await generateTsFile(apiGroup, structMap);
+  }
+}

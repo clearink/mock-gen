@@ -5,11 +5,12 @@ const { convertToTs } = require("../convert");
 const { tsConfig = {} } = require("../config");
 const { API_REQUEST_TYPE } = require("../constant");
 const {
+  createFolder,
   shouldGenerateApi,
   normalizeFilePath,
   normalizeRootName,
   normalizeTsData,
-  createFolder,
+  normalizeFileData,
 } = require("./utils");
 
 // 是否已经写入过该文件 适配同一个url 不同的 method
@@ -50,10 +51,8 @@ async function generatorTsFile(apiGroup, structMap) {
 
     // 是否应该生成该 api
     if (!shouldGenerateApi(baseInfo, tsConfig)) continue;
-
     // 文件路径
     const filePath = normalizeFilePath(baseInfo.apiURI, tsConfig, "ts");
-
     // 创建文件夹
     const createSuccess = await createFolder(filePath, baseInfo.apiURI);
     if (!createSuccess) continue;
