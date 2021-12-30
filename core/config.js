@@ -88,6 +88,7 @@ module.exports = {
     desc: "@cparagraph()",
     "^ops": {
       content: [0, 1],
+      rule: '1'
     },
     time$: '@datetime("yyyy年MM月")',
     total: {

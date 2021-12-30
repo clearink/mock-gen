@@ -1,11 +1,21 @@
 {
-  "name": "mock-gen",
-  "version": "1.0.0",
-  "main": "index.js",
+  "name": "@clearink/mock-gen",
+  "version": "0.1.1",
+  "bin": {
+    "mock-gen": "./lib/index.js"
+  },
+  "description": "generate mock and ts file with eolinker.json",
+  "keywords": [
+    "gen",
+    "api",
+    "dev",
+    "mock"
+  ],
   "license": "MIT",
   "dependencies": {
     "chalk": "^4.1.2",
     "chokidar": "^3.5.1",
+    "commander": "^8.3.0",
     "ejs": "^3.1.6",
     "glob": "^7.1.7",
     "joi": "^17.4.2",

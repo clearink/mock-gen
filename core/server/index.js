@@ -5,20 +5,20 @@ const MockServer = require("./mock_server");
 const { debounce } = require("./utils");
 const logger = require("../utils/logger");
 
-class HttpMockServerPlugin {
-  constructor(_config = {}) {
-    const config = { cwd: process.cwd(), ..._config };
-    const mockServer = new MockServer(config);
+class HttpMockServer {
+  constructor(port) {
+    const cwd = process.cwd();
+    const mockServer = new MockServer(port);
 
     const create = debounce(300, this.create);
 
     // 监听事件
-    chokidar.watch("./mock", { cwd: config.cwd }).on("all", (event) => {
+    chokidar.watch("./mock", { cwd }).on("all", (event) => {
       if (!["add", "change", "unlink"].includes(event)) return;
       mockServer.clear(); // 清除
 
-      create(config.cwd, (filePath) => {
-        const fullPath = path.resolve(config.cwd, filePath);
+      create(cwd, (filePath) => {
+        const fullPath = path.resolve(cwd, filePath);
 
         delete require.cache[fullPath]; // 获取最新的内容
         const content = require(fullPath);
@@ -47,14 +47,15 @@ class HttpMockServerPlugin {
       dynamicList.forEach(callback);
     });
   }
-
-  // webpack plugin
-  apply() {}
 }
-new HttpMockServerPlugin();
-module.exports = HttpMockServerPlugin;
+
 // 发生错误不退出进程
 process.on("uncaughtException", function (err) {
   //打印出错误的调用栈方便调试
   logger.error(err.stack);
 });
+
+function dev(options) {
+  new HttpMockServer(options);
+}
+module.exports = dev;

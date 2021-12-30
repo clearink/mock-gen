@@ -12,8 +12,7 @@ const { API_REQUEST_TYPE } = require("../constant");
 class Server {
   app = new Koa({ env: process.env.NODE_ENV });
   router = new Router({ sensitive: true });
-  constructor(config) {
-    const { port } = { port: 4000, ...config };
+  constructor(port) {
     this.app.listen(port, () => {
       logger.success(`🚀 mock server at http://localhost:${port}/`);
     });
