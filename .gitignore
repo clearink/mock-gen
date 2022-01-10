@@ -3,3 +3,4 @@ yarn.lock
 /node_modules/
 /mock/
 /src/ts/
+/lib/
