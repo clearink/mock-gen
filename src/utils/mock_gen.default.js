@@ -28,8 +28,8 @@ module.exports = {
   // 获取 eolinker 配置
   fetchConfig: {
     // filePath: path.resolve(__dirname, './.mock-gen/eolinker.json'), // api 文件地址
-    spaceKey: 'SDuKq4V0eaee71499cf82e25c58394c30d759436da5a162', // url 参数 自行修改
-    projectHashKey: 'Fw14mLP9e071a3a594a8964cbefe784f8a6afaa94c0de17',// url 参数 自行修改
+    spaceKey: '', // url 参数 自行修改
+    projectHashKey: '',// url 参数 自行修改
 
     EOLINKER_URL: 'http://devapi.sangfor.com/index.php/v2/api_studio/management/api/export', // 数据请求地址 不用修改
     EO_SECRET_KEY: '4flxlRm554de754e234eca1041a716ed40b190fbf532fec', // Eolinker密钥 不用修改

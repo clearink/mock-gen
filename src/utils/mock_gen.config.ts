@@ -32,8 +32,8 @@ export default {
   fetchConfig: {
     // api 配置输出地址
     filePath: MOCK_GEN_CONSTANT.EOLINKER_FILE_PATH,
-    spaceKey: 'SDuKq4V0eaee71499cf82e25c58394c30d759436da5a162',
-    projectHashKey: 'Fw14mLP9e071a3a594a8964cbefe784f8a6afaa94c0de17',
+    spaceKey: undefined,
+    projectHashKey: undefined,
 
     EOLINKER_URL: 'http://devapi.sangfor.com/index.php/v2/api_studio/management/api/export',
     EO_SECRET_KEY: '4flxlRm554de754e234eca1041a716ed40b190fbf532fec', // Eolinker密钥不用修改
