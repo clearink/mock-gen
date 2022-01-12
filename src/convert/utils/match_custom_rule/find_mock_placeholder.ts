@@ -6,7 +6,7 @@ import { API_REQUEST_PARAM_TYPE as TYPE } from '../../../constant'
  * @param {string} separator 分隔符号
  * @returns {string}
  */
-function arrayToString(array, separator = ', ') {
+function arrayToString(array: any[], separator = ', ') {
   return array.reduce((pre, cur, index, arr) => {
     if (cur === undefined) return pre
     if (index < arr.length - 1) return pre + cur + separator
@@ -20,16 +20,17 @@ function arrayToString(array, separator = ', ') {
  * @param {array} args
  * @returns {array}
  */
-function findMockPlaceholder(schema, args = []) {
+function findMockPlaceholder(schema: ParamItemSchema, args: any[] = []) {
   const { paramType, minValue, maxValue, minLength, maxLength } = schema
   const pt = TYPE.findByValue(paramType)?.key
-  let result = []
+  let result = args
   switch (pt) {
     case 'string':
     case 'char':
     case 'boolean':
     case 'array':
-      result = [minLength || args[0], maxLength || args[1]]
+      result[0] = minLength || args[0]
+      result[1] = maxLength || args[1]
       break
     case 'int':
     case 'float':
@@ -38,7 +39,8 @@ function findMockPlaceholder(schema, args = []) {
     case 'short':
     case 'long':
     case 'number':
-      result = [minValue || args[0], maxValue || args[1]]
+      result[0] = minValue || args[0]
+      result[1] = maxValue || args[1]
       break
   }
   return arrayToString(result)

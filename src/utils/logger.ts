@@ -9,22 +9,22 @@ const colors = {
 
 // 日志工具
 export default {
-  info(text, log = true) {
+  info(text?: string, log = true) {
     const str = chalk.hex(colors.info)(text)
     if (!log) return str
     console.log(str)
   },
-  success(text, log = true) {
+  success(text?: string, log = true) {
     const str = chalk.hex(colors.success)(text)
     if (!log) return str
     console.log(str)
   },
-  warning(text, log = true) {
+  warning(text?: string, log = true) {
     const str = chalk.hex(colors.warning)(text)
     if (!log) return str
     console.log(str)
   },
-  error(text, log = true) {
+  error(text?: string, log = true) {
     const str = chalk.hex(colors.error)(text)
     if (!log) return str
     console.log(str)

@@ -1,15 +1,17 @@
 import { API_REQUEST_PARAM_TYPE as TYPE } from '../../../constant'
+import getMockConfig from '../../../utils/get_mock_config'
 import judgeInclude from '../../../utils/judge_include'
 import findMockPlaceholder from './find_mock_placeholder'
 import judgeShouldMatch from './judge_should_match'
 
 /**
- * @description 标准化 paramLimit
- * @param {string} paramLimit
+ * @description 格式化自定义匹配规则
+ * @param paramLimit 自定义匹配规则
+ * @returns
  */
-function normalizeParamLimit(paramLimit) {
+function normalizeParamLimit(paramLimit?: string): CustomMockRule {
   try {
-    if (!paramLimit) throw new Error('Empty ParamLimit')
+    if (!paramLimit?.replace(/\s+/g, '')) throw new Error('Empty ParamLimit')
     return eval(`(()=>(${paramLimit}))()`)
   } catch (error) {
     return { content: paramLimit }
@@ -17,20 +19,23 @@ function normalizeParamLimit(paramLimit) {
 }
 
 /**
- * @description 获取自动匹配的 mock 语法
- * 默认 paramLimit 为自定义的 mock 语法 优先级最高
- * 如果是 enum 匹配到 customMock 规则 应当不匹配 而是直接使用
- * @param {object} matchType 匹配类型 mock joi ts
- * @param {object} schema api
- * @param {object} apiConfig apiConfig 配置
- * @param {object} initState 初始值
- * @returns {object}
+ *
+ * @param matchType 匹配类型 mock joi ts
+ * @param schema 字段配置
+ * @param apiConfig api 配置
+ * @param initState
+ * @returns
  */
-function matchCustomRule(matchType, schema, apiConfig, initState) {
+async function matchCustomRule(
+  matchType: 'mock' | 'joi' | 'ts',
+  schema: ParamItemSchema,
+  apiConfig: ApiListItem,
+  initState: CustomMockRule
+) {
   const { paramKey, paramType, paramLimit } = schema
 
   // 当前字段的 keyString
-  const pt = TYPE.findByValue(paramType)?.key
+  const pt = TYPE.findByValue(paramType)!.key
 
   // 自定义 mock 规则
   const result = normalizeParamLimit(paramLimit)
@@ -57,22 +62,23 @@ function matchCustomRule(matchType, schema, apiConfig, initState) {
   if (editTsType) result.tsType = initState?.tsType
   if (editTsContent) result.tsContent = initState?.tsContent
 
+  const { customMatchRule } = await getMockConfig(true)
+
   for (const [name, config] of Object.entries(customMatchRule || {})) {
     // 生成正则表达式
     const reg = new RegExp(name)
-    for (const item of [].concat(config)) {
+    const list = ([] as CustomMockRule[]).concat(config)
+    for (const item of list) {
       if (item !== null && typeof item === 'object') {
-        const { type, important = false, strict = false } = item
+        const { type, important = false } = item
         // 匹配 配置
         if (!judgeShouldMatch(item, apiConfig)) continue
 
         // 匹配 类型
-        if (!judgeInclude(pt, [].concat(type || []))) continue
+        if (!judgeInclude(pt, ([] as string[]).concat(type || []))) continue
 
         // 匹配 数据
-        const strictJudge = strict && paramKey === name
-        const looseJudge = !strict && reg.test(paramKey)
-        if (!strictJudge && !looseJudge) continue
+        if (!reg.test(paramKey)) continue
 
         if (item.hasOwnProperty('rule') && (important || editRule)) {
           result.rule = item.rule

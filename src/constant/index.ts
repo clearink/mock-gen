@@ -12,7 +12,7 @@ export const API_STATUS = new Constant([
   { label: '异常', value: 7, key: 'error' },
   { label: '设计中', value: 8, key: 'design' },
   { label: '完成', value: 9, key: 'complete' },
-])
+] as const)
 
 /** @description 请求方法 */
 export const API_REQUEST_TYPE = new Constant([
@@ -23,13 +23,13 @@ export const API_REQUEST_TYPE = new Constant([
   { label: 'head', value: 4, key: 'head' },
   { label: 'options', value: 5, key: 'options' },
   { label: 'patch', value: 6, key: 'patch' },
-])
+] as const)
 
 /** @description 请求参数是否为必填 */
 export const API_PARAM_REQUIRED = new Constant([
   { label: '必填', value: '0', key: 'required' },
   { label: '可选', value: '1', key: 'option' },
-])
+] as const)
 
 /** @description 数据结构类型 */
 export const STRUCTURE_TYPE = new Constant([
@@ -39,12 +39,13 @@ export const STRUCTURE_TYPE = new Constant([
   { label: 'array', key: 'array', value: '12' },
   { label: 'object', key: 'object', value: '13' },
   { label: 'enum', key: 'enum', value: '17' },
-])
+] as const)
+
 /** @description 响应值根类型 object/array */
 export const RESULT_PARAM_JSON_TYPE = new Constant([
   { label: 'object', value: 0, key: 'object' },
   { label: 'array', value: 1, key: 'array' },
-])
+] as const)
 
 /**
  * @description 参数类型

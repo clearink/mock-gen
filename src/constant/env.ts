@@ -7,18 +7,17 @@ export const resolveApp = (...relativePath: string[]) => resolve(CWD, ...relativ
 
 export const MOCK_GEN_CONSTANT = (() => {
   const constant = {
-    APP_DIR: resolveApp('.'),
-    CONFIG_FILE_NAME: 'mock_gen.config.js',
+    CONFIG_DIR_PATH: resolveApp('.mock-gen'),
+    // 默认mock文件地址
     MOCK_DIR_NAME: resolveApp('mock'),
     MOCK_TEMPLATE_PATH: resolve(__dirname, '../templates/mock_file.ejs'),
-
+    // 默认ts文件地址
     TYPE_DIR_NAME: resolveApp('src/ts'),
     TYPE_TEMPLATE_PATH: resolve(__dirname, '../templates/ts_file.ejs'),
-
-    EOLINKER_FILE_PATH: resolveApp('.mock-gen/eolinker.json'),
   }
-  const { CONFIG_FILE_NAME } = constant
+  const { CONFIG_DIR_PATH } = constant
   return Object.assign(constant, {
-    CONFIG_FILE_PATH: resolveApp('.mock-gen', CONFIG_FILE_NAME),
+    CONFIG_FILE_PATH: resolve(CONFIG_DIR_PATH, 'mock_gen.config.js'),
+    EOLINKER_FILE_PATH: resolve(CONFIG_DIR_PATH, 'eolinker.json'),
   })
 })()

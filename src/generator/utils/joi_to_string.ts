@@ -1,10 +1,10 @@
-const isPlainObject = (obj) => obj !== null && typeof obj === 'object'
+const isPlainObject = (obj: any) => obj !== null && typeof obj === 'object'
 
 /**
  * @description 解析 joi 配置
  * @param {any[]|Record<string,any>} joiConfig joi 配置
  */
-export default function joiToString(joiConfig: any[] | Record<string, any>) {
+export default function joiToString(joiConfig: string[] | Record<string, string[]>[]): string {
   const initialValue = Array.isArray(joiConfig) ? '' : {} // 初始值
   const content = Object.entries(joiConfig).reduce((result, [key, value]) => {
     const isString = typeof result === 'string'

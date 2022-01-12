@@ -1,56 +1,30 @@
 import merge from 'lodash.merge'
 import { resolve } from 'path'
-import { prompt } from 'inquirer'
 import { pathExistsSync, copyFileSync, ensureFile } from 'fs-extra'
-import logger from '../utils/logger'
 import { MOCK_GEN_CONSTANT } from '../constant/env'
 import defaultConfig from './mock_gen.config'
-
-interface ConfigItemProps {
-  includeStatus?: string[]
-  includeGroup?: string[]
-  excludeGroup?: string[]
-  includeApi?: string[]
-  excludeApi?: string[]
-  dirPath: string
-  templatePath: string
-}
-interface ConfigProps {
-  mockConfig: ConfigItemProps
-  tsConfig: ConfigItemProps
-  fetchConfig: {
-    filePath: string
-    spaceKey: string
-    projectHashKey: string
-    EOLINKER_URL: string
-    EO_SECRET_KEY: string
-  }
-  customMatchRule?: Record<string, any>
-}
+import logger from './logger'
 
 /**
- * 获取合并后的配置文件
+ *
+ * @param useCache 是否使用缓存数据
+ * @returns
  */
-export default async function getMockConfig(inquire = false) {
+let cache: ConfigSchema | null = null
+export default async function getMockConfig(useCache = false): Promise<ConfigSchema> {
   // 项目内的config
-  const { CONFIG_FILE_PATH, CONFIG_FILE_NAME } = MOCK_GEN_CONSTANT
+  if (useCache && cache !== null) return cache
+  const { CONFIG_FILE_PATH: PATH } = MOCK_GEN_CONSTANT
   let customConfig = {}
-  if (pathExistsSync(CONFIG_FILE_PATH)) {
-    delete require.cache[CONFIG_FILE_PATH]
-    customConfig = require(CONFIG_FILE_PATH)
-  } else if (inquire) {
-    const answer = await prompt<{ create: boolean }>([
-      {
-        type: 'confirm',
-        message: logger.warning('检测到项目中没有配置文件，是否自动生成默认配置', false),
-        name: 'create',
-        default: false,
-      },
-    ])
-    if (answer.create) {
-      await ensureFile(CONFIG_FILE_PATH)
-      copyFileSync(resolve(__dirname, './mock_gen.default.js'), CONFIG_FILE_PATH)
-    }
+  if (pathExistsSync(PATH)) {
+    delete require.cache[PATH]
+    customConfig = require(PATH)
+  } else {
+    // 静默生成默认配置文件 并提示
+    await ensureFile(PATH)
+    copyFileSync(resolve(__dirname, './mock_gen.default.js'), PATH)
+    logger.warning(`未检测到配置文件,已自动生成.请修改配置后运行: ${PATH}`)
+    process.exit(0)
   }
-  return merge({}, defaultConfig, customConfig) as ConfigProps
+  return (cache = merge({} as any, defaultConfig, customConfig))
 }

@@ -1,4 +1,5 @@
 import { API_REQUEST_PARAM_TYPE as TYPE } from '../../constant'
+import getStructMap from '../../utils/get_struct_map'
 import logger from '../../utils/logger'
 /**
  * @description 获取字段枚举值 不允许 array object 自定义数据结构
@@ -8,8 +9,15 @@ import logger from '../../utils/logger'
  * @param {boolean} shouldGenerate 是否需要生成
  * @returns { Array }
  */
-export default function generateEnum(structMap, array = [], shouldGenerate = true) {
+/**
+ *
+ * @param array paramValueList 或者 childList
+ * @param shouldGenerate 是否可以生成
+ * @returns
+ */
+export default function generateEnum(array: ParamValueEnum[], shouldGenerate = true) {
   if (!shouldGenerate) return []
+  const structMap = getStructMap(true)
   // 获取参数类型 默认都是 string
   return array.reduce((pre, item) => {
     const { value: $value, paramKey, paramType } = item
@@ -21,7 +29,7 @@ export default function generateEnum(structMap, array = [], shouldGenerate = tru
       return pre
     }
 
-    const type = TYPE.findByValue(paramType, 'string')?.key
+    const type = TYPE.findByValue(paramType, 'string')!.key
     switch (type) {
       case 'string':
       case 'char':
@@ -36,7 +44,7 @@ export default function generateEnum(structMap, array = [], shouldGenerate = tru
       case 'short':
       case 'long':
         // 转换为数字
-        return pre.concat(Number.isNaN(+value) ? value : +value)
+        return pre.concat(isNaN(+value) ? value : +value)
       case 'boolean':
         // 布尔值
         return pre.concat(/^true$/i.test(value))
@@ -52,17 +60,5 @@ export default function generateEnum(structMap, array = [], shouldGenerate = tru
       default:
         return pre
     }
-  }, [])
+  }, [] as any[])
 }
-/** 字段值  enum
- *  {
-      "value": "1",
-      "paramType": "0",
-    },
-
-    数据结构 enum
-    {
-      paramKey: "true"
-      paramType: "8"
-    }
- */

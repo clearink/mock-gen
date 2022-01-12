@@ -17,7 +17,7 @@ function normalizeTypeName(name: string) {
  * @description
  * 获取 namespace name
  */
-export function normalizeRootName(baseInfo) {
+export function normalizeRootName(baseInfo: ApiListItem['baseInfo']) {
   const { apiURI, apiRequestType } = baseInfo
   const method = API_REQUEST_TYPE.findByValue(apiRequestType)?.key
   const lastSlash = apiURI.replace(/(.*)\//g, '')
@@ -52,7 +52,7 @@ function compressName(parentName: string, name: string, maxLen: number) {
       nameList[i] = item.substring(0, item.length - 2)
       break
     }
-    parentList.length && nameList.unshift(parentList.pop())
+    parentList.length && nameList.unshift(parentList.pop()!)
     normalized = parentList.concat(nameList).join('').replace(/\?/g, '')
   }
   return normalized
@@ -64,7 +64,10 @@ function compressName(parentName: string, name: string, maxLen: number) {
  * 2. 生成对应的名称
  * 3. 返回
  */
-export function normalizeTsData(parentName: string, data: Record<string, any> = {}) {
+export function normalizeTsData(
+  parentName: string,
+  data: Record<string, any> = {}
+): Record<string, any> {
   return Object.entries(data).reduce((result, [name, config]) => {
     const { tsType, tsContent } = config
     // 如果是对象则需要计算出对应的 typeName
@@ -79,5 +82,5 @@ export function normalizeTsData(parentName: string, data: Record<string, any> = 
 
     result[parentName] = { ...result[parentName], [name]: typeName }
     return { ...result, ...normalizeTsData(optimized, tsContent) }
-  }, {})
+  }, {} as Record<string, any>)
 }

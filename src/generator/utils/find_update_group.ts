@@ -1,15 +1,11 @@
 import judgeInclude from '../../utils/judge_include'
+
 /**
  * @description 获取需要更新的组数据
  */
-interface findUpdateGroupConfig {
-  includeGroup?: string[]
-  excludeGroup?: string[]
-  [key: string]: any
-}
-export default function findUpdateGroup(groupList: any[], config: findUpdateGroupConfig = {}) {
+export default function findUpdateGroup(groupList: GroupListItem[], config: ConfigSchemaItem) {
   // 需要更新的组 , 不需要更新的组(优先级高)
-  const { includeGroup, excludeGroup } = config
+  const { includeGroup, excludeGroup } = config ?? {}
 
   return groupList.filter((group) => {
     const { groupName } = group

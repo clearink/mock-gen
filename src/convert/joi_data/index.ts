@@ -1,40 +1,45 @@
 import { API_REQUEST_PARAM_TYPE as TYPE, API_PARAM_REQUIRED } from '../../constant'
+import getStructMap from '../../utils/get_struct_map'
 
 import { judgeGenerateEnum, normalizeParam, normalizeParamType, renderJoiEnum } from '../utils'
 
 /**
  * @description 解析配置得到 joi 数据 **暂时不处理 headers 参数**
- * @param {object} apiConfig 配置的返回值
- * @param {Map} structMap 结构体map
- * @returns {object}
+ * @param apiConfig api配置
+ * @returns
  */
-function convertToJoi(apiConfig, structMap) {
+function convertToJoi(apiConfig: ApiListItem) {
   const { requestInfo, urlParam, restfulParam } = apiConfig
   // get 请求应当是没有 body 参数的
-  const bodyParams = generateJoi(requestInfo, structMap, apiConfig, true) // body 参数
-  const queryParams = generateJoi(urlParam, structMap, apiConfig) // query 参数
-  const restfulParams = generateJoi(restfulParam, structMap, apiConfig) // restful参数
+  const bodyParams = generateJoi(requestInfo, apiConfig, true) // body 参数
+  const queryParams = generateJoi(urlParam, apiConfig) // query 参数
+  const restfulParams = generateJoi(restfulParam, apiConfig) // restful参数
   return { bodyParams, queryParams, restfulParams }
 }
 
 /**
- * @description 递归得到 joi 数据
- * @param {any[]} schemaList 需要分析的数据
- * @param {Map<string|number, {struct:any,type:string}>} structMap 数据结构
- * @param {object} apiConfig 配置的返回值
- * @param {boolean} strict 是否精确匹配类型
+ * @description
+ * @param schemaList 字段配置列表
+ * @param apiConfig api配置
+ * @param strict 是否精确匹配类型
+ * @returns
  */
-function generateJoi(schemaList: any[], structMap, apiConfig, strict = false) {
-  return normalizeParam(schemaList).reduce((result, schema) => {
+function generateJoi(
+  schemaList: ParamItemSchema[],
+  apiConfig: ApiListItem,
+  strict = false
+): Record<string, string[]> | string[] {
+  const structMap = getStructMap(true)
+  return normalizeParam(schemaList).reduce(async (result, schema) => {
     const { structureID, paramNotNull, paramType } = schema
     if (schema.hasOwnProperty('structureID')) {
-      const struct = structMap.get(structureID)?.struct
+      const struct = structMap.get(structureID!)?.struct
       if (!struct) return result
-      const args = [struct, structMap, apiConfig, strict] as const
+      const args = [struct, apiConfig, strict] as const
       return { ...result, ...generateJoi(...args) }
     }
 
-    const content = schemaToJoi(schema, structMap, apiConfig, strict)
+    const content = await schemaToJoi(schema, apiConfig, strict)
     if (content.length <= 0) return result // 为空直接返回
     // 是否为必填项
     const required = API_PARAM_REQUIRED.when(paramNotNull, 'required')
@@ -43,25 +48,23 @@ function generateJoi(schemaList: any[], structMap, apiConfig, strict = false) {
     if (required && (stringType || !strict)) content.push(".allow('')")
     if (required) content.push('.required()')
     const paramKey = schema.paramKey.replace(/\s/g, '')
-    return { ...result, [paramKey]: ['joi.'].concat(content) }
+    return { ...result, [paramKey]: ['joi.'].concat(content as string[]) }
   }, {})
 }
 
 /**
- * @description 根据类型获得相应的 joi 数据
- * @param {object} schema 请求参数配置
- * @param {Map<string|number, {struct:any,type:string}>} structMap 数据结构
- * @param {object} apiConfig apiConfig 配置
- * @param {boolean} strict 是否精确匹配类型
+ * @description 解析字段获得相应的 joi 数据
+ * @param schema 字段配置
+ * @param apiConfig api配置
+ * @param strict 是否精确匹配
+ * @returns
  */
-function schemaToJoi(schema, structMap, apiConfig, strict = false) {
+async function schemaToJoi(schema: ParamItemSchema, apiConfig: ApiListItem, strict = false) {
   // 获取参数的类型字符串 同时处理自定义数据结构
-  const type = normalizeParamType(schema, structMap)
+  const type = normalizeParamType(schema)
 
   // 获取枚举值
-  const shouldGenerate = judgeGenerateEnum(schema, structMap, apiConfig, {
-    matchType: 'joi',
-  })
+  const shouldGenerate = await judgeGenerateEnum('joi', schema, apiConfig)
 
   if (shouldGenerate !== false) {
     return renderJoiEnum(shouldGenerate.joi, type)
@@ -95,7 +98,7 @@ function schemaToJoi(schema, structMap, apiConfig, strict = false) {
     case 'object':
       const { childList = [] } = schema
       const joiType = type === 'array' ? 'array' : 'object'
-      const items = generateJoi(childList, structMap, apiConfig, strict)
+      const items = generateJoi(childList as ParamItemSchema[], apiConfig, strict)
       if (Object.keys(items).length === 0) return [`${joiType}()`]
       if (type !== 'array') return ['object(', items, ')']
       return ['array().', 'items(joi.object(', items, '))']

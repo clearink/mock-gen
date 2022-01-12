@@ -1,3 +1,4 @@
+import getStructMap from '../../utils/get_struct_map'
 import {
   renderMockEnum,
   matchCustomRule,
@@ -7,31 +8,30 @@ import {
 } from '../utils'
 
 /**
- * @description 解析配置得到 mock 数据
- * @param {object} resultInfo 配置的返回值
- * @param {Map} structMap 结构体map
- * @param {object} apiConfig apiConfig 配置
- * @returns {object}
+ *
+ * @param apiConfig api 配置
+ * @returns
  */
-function convertToMock(apiConfig, structMap) {
+function convertToMock(apiConfig: ApiListItem) {
   const { resultInfo } = apiConfig
-  return generateMock(resultInfo, structMap, apiConfig)
+  return generateMock(resultInfo, apiConfig)
 }
 
 /**
- * @description 递归得到 mock 数据
- * @param {any[]} schemaList 需要分析的数据
- * @param {Map<string|number, {struct:any,type:string}>} structMap 数据结构
- * @param {object} apiConfig api配置
+ *
+ * @param schemaList 需要分析的 API 数据
+ * @param apiConfig API 配置
+ * @returns
  */
-function generateMock(schemaList, structMap, apiConfig) {
-  return normalizeParam(schemaList).reduce((result, schema) => {
+function generateMock(schemaList: ParamItemSchema[], apiConfig: ApiListItem): Record<string, any> {
+  const structMap = getStructMap(true)
+  return normalizeParam(schemaList).reduce(async (result, schema) => {
     if (schema.hasOwnProperty('structureID')) {
-      const struct = structMap.get(schema.structureID)?.struct
+      const struct = structMap.get(schema.structureID!)?.struct
       if (!struct) return result
-      return { ...result, ...generateMock(struct, structMap, apiConfig) }
+      return { ...result, ...generateMock(struct, apiConfig) }
     }
-    const { rule, content } = schemaToMock(schema, structMap, apiConfig)
+    const { rule, content } = await schemaToMock(schema, apiConfig)
     const suffix = rule ? `|${rule}` : ''
     const paramKey = `${schema.paramKey}${suffix}`.replace(/\s/g, '')
     return { ...result, [paramKey]: content }
@@ -45,20 +45,18 @@ function generateMock(schemaList, structMap, apiConfig) {
  * @param {object} apiConfig apiConfig 配置
  * @returns {{ rule:string, content:any }}
  */
-function schemaToMock(schema, structMap, apiConfig) {
+async function schemaToMock(schema: ParamItemSchema, apiConfig: ApiListItem) {
   // 获取参数的类型字符串 同时处理自定义数据结构
-  const type = normalizeParamType(schema, structMap)
+  const type = normalizeParamType(schema)
 
   // 获取枚举值
-  const shouldGenerate = judgeGenerateEnum(schema, structMap, apiConfig, {
-    matchType: 'mock',
-  })
+  const shouldGenerate = await judgeGenerateEnum('mock', schema, apiConfig)
 
   if (shouldGenerate !== false) {
     return renderMockEnum(shouldGenerate, type)
   }
 
-  let content = '@word({args})'
+  let content: string | null = '@word({args})'
   // 判断类型
   switch (type) {
     case 'string':
@@ -97,9 +95,9 @@ function schemaToMock(schema, structMap, apiConfig) {
     case 'json':
     case 'object':
       const { childList = [] } = schema
-      const complexContent = generateMock(childList, structMap, apiConfig)
+      const complexContent = generateMock(childList as ParamItemSchema[], apiConfig)
       const isEmpty = Object.keys(complexContent).length === 0
-      const matched = matchCustomRule('mock', schema, apiConfig, {
+      const matched = await matchCustomRule('mock', schema, apiConfig, {
         content: isEmpty ? content : complexContent,
       })
       const { rule: mRule, content: mContent } = matched
@@ -108,4 +106,4 @@ function schemaToMock(schema, structMap, apiConfig) {
   return matchCustomRule('mock', schema, apiConfig, { content })
 }
 
-export default  convertToMock
+export default convertToMock

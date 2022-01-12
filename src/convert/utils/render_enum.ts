@@ -9,8 +9,9 @@ export function renderJoiEnum(enumList: any[] | string, type: string) {
   return [['valid(', enumList, ')']]
 }
 
-export function renderMockEnum({ content, rule }, type: string) {
+export function renderMockEnum(mockRule: CustomMockRule, type: string) {
   // TODO: 待优化
+  const { content, rule } = mockRule
   return { content, rule }
 }
 export function renderTsEnum(enumList: any[] | string, type: string) {
