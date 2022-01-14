@@ -71,14 +71,14 @@ async function matchCustomRule(
     for (const item of list) {
       if (item !== null && typeof item === 'object') {
         const { type, important = false } = item
-        // 匹配 配置
-        if (!judgeShouldMatch(item, apiConfig)) continue
-
+        // 先匹配 key 数据
+        if (!reg.test(paramKey)) continue
+        
         // 匹配 类型
         if (!judgeInclude(pt, ([] as string[]).concat(type || []))) continue
 
-        // 匹配 数据
-        if (!reg.test(paramKey)) continue
+        // 匹配 配置
+        if (!judgeShouldMatch(item, apiConfig)) continue
 
         if (item.hasOwnProperty('rule') && (important || editRule)) {
           result.rule = item.rule

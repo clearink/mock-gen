@@ -40,10 +40,9 @@ function generateMock(schemaList: ParamItemSchema[], apiConfig: ApiListItem): Re
 
 /**
  * @description 根据 schema 生成 mock 数据
- * @param {object} schema
- * @param {Map<number,{content: object,type:string}>} structMap
- * @param {object} apiConfig apiConfig 配置
- * @returns {{ rule:string, content:any }}
+ * @param schema 字段配置
+ * @param apiConfig api配置
+ * @returns 
  */
 async function schemaToMock(schema: ParamItemSchema, apiConfig: ApiListItem) {
   // 获取参数的类型字符串 同时处理自定义数据结构
