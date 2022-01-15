@@ -30,7 +30,7 @@ interface GenerateProps {
 export default async function generate(props: GenerateProps) {
   const { ts, mock, fetch } = props
 
-  const { fetchConfig, mockConfig, tsConfig } = await getMockConfig()
+  const { fetchConfig, mockConfig, tsConfig } = getMockConfig()
 
   const fetchSuccess = fetch ? await fetchEolinker() : true
 
@@ -45,7 +45,7 @@ export default async function generate(props: GenerateProps) {
   getStructMap(false, EOLINKER_JSON)
   // 获得拍平后的 groupList;
   const groupList = flatGroupList(EOLINKER_JSON.apiGroupList)
-
+  
   if (mock) generateMock(groupList, mockConfig)
 
   if (ts) generateTs(groupList, tsConfig)

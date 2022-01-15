@@ -21,18 +21,17 @@ interface ConfigSchema {
   customMatchRule?: Record<string, CustomMockRule>
 }
 interface CustomMockRule extends Partial<ConfigSchemaItem> {
-  // mock
-  rule?: any
-  content?: any
-  args?: any
-
-  // joi
-  joi?: any
-
-  // ts
-  tsType?: any
-  tsContent?: any
-
-  important?: boolean
+  // 需要匹配的数据类型
   type?: string[] | string
+
+  // mock
+  mock_rule?: any
+  mock_type?: any
+  mock_args?: any
+  // joi
+  joi_type?: any
+  // ts
+  ts_type?: any
+  // 强制匹配
+  important?: boolean
 }

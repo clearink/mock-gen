@@ -1,28 +1,4 @@
-import { API_REQUEST_TYPE } from '../../constant'
-
-/**
- * @description 将 name 以 -_[A-Z]拆分开 获得首字母大写的数组
- * @param {string} name 名称字符串
- */
-function normalizeTypeName(name: string) {
-  return name
-    .replace(/([A-Z])/g, '_$1') // 大写字母前加 _
-    .replace(/^\w|(?<=[-_])(\w)/g, ($0) => $0.toUpperCase())
-    .replace(/\s/g, '') // 去除空格
-    .split(/[-_]/g) // 按照特殊符号拆开
-    .filter(Boolean) // 去除空字符; // 特殊符号首字母全部转成大写;
-}
-
-/**
- * @description
- * 获取 namespace name
- */
-export function normalizeRootName(baseInfo: ApiListItem['baseInfo']) {
-  const { apiURI, apiRequestType } = baseInfo
-  const method = API_REQUEST_TYPE.findByValue(apiRequestType)?.key
-  const lastSlash = apiURI.replace(/(.*)\//g, '')
-  return normalizeTypeName(`${method}_${lastSlash}`).join('')
-}
+import { normalizeTypeName } from '../../utils/normalize_prop_name'
 
 /**
  * @description 压缩字段名
@@ -57,30 +33,31 @@ function compressName(parentName: string, name: string, maxLen: number) {
   }
   return normalized
 }
+
 /**
  * @description 将 ts 生成的类型对象处理成能够被渲染的 cjs 数据
- * 步骤
- * 1. 扁平化整个对象
- * 2. 生成对应的名称
- * 3. 返回
+ * @param parentName 初始名称
+ * @param data 数据源
+ * @returns
  */
 export function normalizeTsData(
   parentName: string,
-  data: Record<string, any> = {}
+  data: Record<string, { type: string; content: any }> = {}
 ): Record<string, any> {
   return Object.entries(data).reduce((result, [name, config]) => {
-    const { tsType, tsContent } = config
-    // 如果是对象则需要计算出对应的 typeName
-    if (tsContent === null || typeof tsContent !== 'object') {
+    const { type, content } = config
+    if (content === null || typeof content !== 'object') {
       const prop = name.replace(/\s/g, '')
-      result[parentName] = { ...result[parentName], [prop]: tsContent }
+      result[parentName] = { ...result[parentName], [prop]: content }
       return { ...result }
     }
+    // 如果是对象则需要计算出对应的 typeName
     // 最长不超过 24 个字符
     const optimized = compressName(parentName, name, 24)
-    const typeName = `${optimized}${tsType === 'array' ? '[]' : ''}`
+    const suffix = type === 'array' ? '[]' : ''
+    const typeName = `${optimized}${suffix}`
 
     result[parentName] = { ...result[parentName], [name]: typeName }
-    return { ...result, ...normalizeTsData(optimized, tsContent) }
+    return { ...result, ...normalizeTsData(optimized, content) }
   }, {} as Record<string, any>)
 }

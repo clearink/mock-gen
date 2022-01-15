@@ -7,6 +7,7 @@ import {
   normalizeParam,
   normalizeParamType,
 } from '../utils'
+import { normalizeTsData } from './normalize_ts_data'
 
 /**
  * @description 生成 typescript 文件
@@ -18,7 +19,11 @@ function convertToTs(apiConfig: ApiListItem) {
   const body = generateTs(requestInfo, apiConfig) // body 参数
   const query = generateTs(urlParam, apiConfig) // query 参数
   const response = generateTs(resultInfo, apiConfig) // 响应数据
-  return { request: { body, query }, response }
+  return {
+    body: normalizeTsData('BodyParam', body),
+    query: normalizeTsData('QueryParam', query),
+    response: normalizeTsData('Response', response),
+  }
 }
 
 /**
@@ -29,21 +34,21 @@ function convertToTs(apiConfig: ApiListItem) {
  */
 function generateTs(schemaList: ParamItemSchema[], apiConfig: ApiListItem): Record<string, any> {
   const structMap = getStructMap(true)
-  return normalizeParam(schemaList).reduce(async (result, schema) => {
+  return normalizeParam(schemaList).reduce((result, schema) => {
     const { structureID, paramNotNull } = schema
     if (schema.hasOwnProperty('structureID')) {
       const struct = structMap.get(structureID!)?.struct
       if (!struct) return result
       return { ...result, ...generateTs(struct, apiConfig) }
     }
-    const content = (await schemaToTs(schema, apiConfig)) ?? {
-      tsType: 'any',
-      tsContent: 'any',
+    const { type, content } = schemaToTs(schema, apiConfig) ?? {
+      type: 'any',
+      content: 'any',
     }
     // 是否为必填项
     const suffix = API_PARAM_REQUIRED.when(paramNotNull, 'required') ? '' : '?'
     const paramKey = `${schema.paramKey}${suffix}`.replace(/\s/g, '')
-    return { ...result, [paramKey]: content }
+    return { ...result, [paramKey]: { type, content: content } }
   }, {})
 }
 
@@ -53,28 +58,28 @@ function generateTs(schemaList: ParamItemSchema[], apiConfig: ApiListItem): Reco
  * @param apiConfig api 配置
  * @returns
  */
-async function schemaToTs(
-  schema: ParamItemSchema,
-  apiConfig: ApiListItem
-): Promise<Record<string, any>> {
+function schemaToTs(schema: ParamItemSchema, apiConfig: ApiListItem) {
   // 获取参数的类型字符串 同时处理自定义数据结构
   const type = normalizeParamType(schema)
+
+  // 自定义渲染规则
+  const bindMatchRule = matchCustomRule('ts', schema, apiConfig)
   // 获取枚举值
-  const shouldGenerate = await judgeGenerateEnum('ts', schema, apiConfig)
+  const shouldGenerate = judgeGenerateEnum(schema, bindMatchRule)
+  if (shouldGenerate) return renderTsEnum(shouldGenerate.ts_type, type)
 
-  if (shouldGenerate !== false) {
-    return renderTsEnum(shouldGenerate.tsContent, type)
-  }
-
+  let ts: any = 'any'
   switch (type) {
     case 'string':
     case 'char':
     case 'date':
     case 'datetime':
-      return matchCustomRule('ts', schema, apiConfig, { tsContent: 'string' })
+      ts = 'string'
+      break
     case 'file':
       // 暂时不知道是啥玩意儿
-      return matchCustomRule('ts', schema, apiConfig, { tsContent: 'any' })
+      ts = 'any'
+      break
     case 'int':
     case 'float':
     case 'double':
@@ -82,24 +87,24 @@ async function schemaToTs(
     case 'byte':
     case 'short':
     case 'long':
-      return matchCustomRule('ts', schema, apiConfig, { tsContent: 'number' })
+      ts = 'number'
+      break
     case 'boolean':
-      return matchCustomRule('ts', schema, apiConfig, { tsContent: 'boolean' })
+      ts = 'boolean'
+      break
     case 'null':
-      return matchCustomRule('ts', schema, apiConfig, { tsContent: 'null' })
+      ts = 'null'
+      break
     case 'array':
     case 'json':
     case 'object':
       const { childList = [] } = schema
-      const tsType = type === 'array' ? 'any[]' : 'Record<string, any>'
+      const defaultTs = type === 'array' ? 'any[]' : 'Record<string, any>'
       const items = generateTs(childList as ParamItemSchema[], apiConfig)
       const isEmpty = Object.keys(items).length === 0
-      return matchCustomRule('ts', schema, apiConfig, {
-        tsContent: isEmpty ? tsType : items,
-        tsType: type,
-      })
+      ts = isEmpty ? defaultTs : items
   }
-  return { tsType: 'any', tsContent: 'any' }
+  return { content: bindMatchRule({ ts_type: ts }).ts_type, type }
 }
 
 export default convertToTs

@@ -23,9 +23,12 @@
 | -nt  | --no-ts    | 不生成 ts 文件   |
 | -nm  | --no-mock  | 不生成 mock 文件 |
 
+
+## 配置文件
+
+1. 位置:  ./mock-gen/mock_gen.config.js
+
+2. customMatchRule: 自定义匹配规则, 对象的 key 会被解析成正则
+
 ## TODO
-0. 默认生成 mock-gen.config.js 和 templates we
-1. 优化 joi 和 ts 的 生成逻辑
-2. 优化templates的渲染方式
-3. 优化customMatchRule函数的使用方式
-4. 支持解析swagger.json
+99999. 支持解析swagger.json

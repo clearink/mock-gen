@@ -14,9 +14,8 @@ const typeList = ['enum', 'json', 'object', 'array'] // 这几种才能生成枚
  * @returns
  */
 export default function judgeGenerateEnum(
-  matchType: 'mock' | 'joi' | 'ts',
   schema: ParamItemSchema,
-  apiConfig: ApiListItem
+  matchRule: (initState: any) => CustomMockRule
 ) {
   const { paramType, paramValueList = [], childList = [] } = schema
 
@@ -26,11 +25,24 @@ export default function judgeGenerateEnum(
   const enumList = generateEnum(list, shouldGenerate)
 
   if (enumList.length <= 0) return false
-
-  return matchCustomRule(matchType, schema, apiConfig, {
-    content: enumList,
-    joi: enumList,
-    tsContent: enumList,
-    rule: '1',
+  return matchRule({
+    mock_rule: '1',
+    mock_type: enumList,
+    joi_type: enumList,
+    ts_type: enumList,
   })
 }
+
+/**
+ * "paramValueList": [
+        {
+          "value": "1",
+          "valueDescription": "",
+          "paramType": "0",
+          "radio": true
+        },
+        { "value": "2", "valueDescription": "", "paramType": "0" },
+        { "value": "true", "valueDescription": "", "paramType": "8" },
+        { "value": "false", "valueDescription": "", "paramType": "8" }
+      ]
+ */

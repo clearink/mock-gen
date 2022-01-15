@@ -14,22 +14,22 @@ exports.<%= method %> = async (ctx, next) => {
 
   // 验证 body 参数
   const bodySchema = joi.object({
-    <% for(const [name, config] of Object.entries(joi_data?.bodyParams ?? {})) { _%>
-      "<%- name %>": <%- joiToString(config) _%>,
+    <% for(const [name, config] of Object.entries(joi_body)) { _%>
+      "<%- name %>": <%- config _%>,
     <% } _%>
   });
 
   // 验证 query 参数
   const querySchema = joi.object({
-    <% for(const [name, config] of Object.entries(joi_data?.queryParams ?? {})) { _%>
-      "<%- name %>": <%- joiToString(config) _%>,
+    <% for(const [name, config] of Object.entries(joi_query)) { _%>
+      "<%- name %>": <%- config _%>,
     <% } _%>
   });
 
   // 验证 restful 参数
   const restfulSchema = joi.object({
-    <% for(const [name, config] of Object.entries(joi_data?.restfulParams ?? {})) { _%>
-      "<%- name %>": <%- joiToString(config) _%>,
+    <% for(const [name, config] of Object.entries(joi_restful)) { _%>
+      "<%- name %>": <%- config _%>,
     <% } _%>
   });
   try {

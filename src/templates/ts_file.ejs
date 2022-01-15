@@ -6,35 +6,35 @@
  */
 export namespace <%= rootName %> {
   
-  <% if(Object.keys(body ?? {}).length) { %>
+  <% if(Object.keys(body).length) { %>
   /** body 参数 */
   <% } _%>
-  <% for(const [name, config] of Object.entries(body ?? {}))  { _%>
+  <% for(const [name, config] of Object.entries(body))  { _%>
     export interface <%- name %> {
       <% for(const [prop, type] of Object.entries(config)) { _%>
-        "<%- prop %>": <%- type _%>;
+        <%- prop %>: <%- type _%>;
       <% } _%>
     }
   <% } _%>
 
-  <% if(Object.keys(query ?? {}).length) { %>
+  <% if(Object.keys(query).length) { %>
   /** query 参数 */
   <% } _%>
-  <% for(const [name, config] of Object.entries(query ?? {}))  { _%>
+  <% for(const [name, config] of Object.entries(query))  { _%>
     export interface <%- name %> {
       <% for(const [prop, type] of Object.entries(config)) { _%>
-        "<%- prop %>": <%- type _%>;
+        <%- prop %>: <%- type _%>;
       <% } _%>
     }
   <% } _%>
 
-  <% if(Object.keys(response ?? {}).length) { %>
+  <% if(Object.keys(response).length) { %>
   /** 响应 数据 */
   <% } _%>
-  <% for(const [name, config] of Object.entries(response ?? {}))  { _%>
+  <% for(const [name, config] of Object.entries(response))  { _%>
     export interface <%- name %> {
       <% for(const [prop, type] of Object.entries(config)) { _%>
-        "<%- prop %>": <%- type _%>;
+        <%- prop %>: <%- type _%>;
       <% } _%>
     }
   <% } _%>

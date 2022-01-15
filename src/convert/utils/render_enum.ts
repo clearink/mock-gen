@@ -11,8 +11,7 @@ export function renderJoiEnum(enumList: any[] | string, type: string) {
 
 export function renderMockEnum(mockRule: CustomMockRule, type: string) {
   // TODO: 待优化
-  const { content, rule } = mockRule
-  return { content, rule }
+  return mockRule
 }
 export function renderTsEnum(enumList: any[] | string, type: string) {
   if (Array.isArray(enumList)) {
@@ -21,7 +20,7 @@ export function renderTsEnum(enumList: any[] | string, type: string) {
       .replace(/\,/g, ' | ')
   }
   if (type === 'array') {
-    return { tsType: 'enum', tsContent: `(${enumList})[]` }
+    return { type: 'enum', content: `(${enumList})[]` }
   }
-  return { tsType: 'enum', tsContent: enumList }
+  return { type: 'enum', content: enumList }
 }

@@ -3,8 +3,9 @@ import logger from '../utils/logger'
 import { appendFile, ensureFile, writeFile } from 'fs-extra'
 import { convertToJoi, convertToMock } from '../convert'
 import { API_REQUEST_TYPE, RESULT_PARAM_JSON_TYPE } from '../constant'
-import { joiToString, shouldGenerateApi, normalizeFilePath, normalizeFileData } from './utils'
+import { shouldGenerateApi, normalizeFilePath, normalizeFileData } from './utils'
 import getMockConfig from '../utils/get_mock_config'
+import { ConvertJoiResult } from '../convert/joi_data'
 
 // 是否已经写入过该文件 适配同一个url 不同的 method
 const writeSet = new Set<string>() // TODO: 独立维护
@@ -15,30 +16,28 @@ const writeSet = new Set<string>() // TODO: 独立维护
  * @param mockData mock 数据
  * @param joiData joi 数据
  */
-async function handleWriteFile(
-  apiConfig: ApiListItem,
-  mockData: Record<string, any>,
-  joiData: Record<string, any>
-) {
-  const { mockConfig } = await getMockConfig(true)
+async function handleWriteFile(apiConfig: ApiListItem, mockData: any, joiData: ConvertJoiResult) {
+  const { mockConfig } = getMockConfig(true)
   const { baseInfo, resultParamJsonType: responseType } = apiConfig
 
   // 文件路径
   const filePath = normalizeFilePath('js', baseInfo.apiURI, mockConfig.dirPath)
+
   logger.info(`✌ 正在生成 mock 文件: ${filePath}`)
   // 是否追加
   const isAppend = writeSet.has(filePath)
-  
+
   // 返回数据根类型
   const arrayRoot = RESULT_PARAM_JSON_TYPE.when(responseType, 'array')
   // 组装数据                           // 模板路径
   const fileData = await renderFile(mockConfig.templatePath, {
     method: API_REQUEST_TYPE.findByValue(baseInfo.apiRequestType)?.key,
     mock_data: JSON.stringify(mockData),
-    joi_data: joiData ?? {},
+    joi_body: joiData.bodyParams || {},
+    joi_query: joiData.queryParams || {},
+    joi_restful: joiData.restfulParams || {},
     name: baseInfo.apiName,
     uri: baseInfo.apiURI,
-    joiToString,
     isAppend,
     arrayRoot,
   })
@@ -57,7 +56,7 @@ async function handleWriteFile(
  * @param apiGroup apiGroup 配置
  */
 export default async function generateMockFile(apiGroup: GroupListItem) {
-  const { mockConfig } = await getMockConfig(true)
+  const { mockConfig } = getMockConfig(true)
   for (const apiConfig of apiGroup.apiList || []) {
     const { baseInfo } = apiConfig
 

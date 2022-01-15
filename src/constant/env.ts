@@ -19,5 +19,6 @@ export const MOCK_GEN_CONSTANT = (() => {
   return Object.assign(constant, {
     CONFIG_FILE_PATH: resolve(CONFIG_DIR_PATH, 'mock_gen.config.js'),
     EOLINKER_FILE_PATH: resolve(CONFIG_DIR_PATH, 'eolinker.json'),
+    TEMPLATE_DIR_PATH: resolve(CONFIG_DIR_PATH, 'templates')
   })
 })()

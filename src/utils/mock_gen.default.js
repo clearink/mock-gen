@@ -12,8 +12,8 @@ module.exports = {
     excludeGroup: [], // groupName
     includeApi: [], // 以 apiName/apiURI 字段为准
     excludeApi: [], // 以 apiName/apiURI 字段为准
-    dirPath: path.resolve(__dirname, './mock'), // 生成的mock文件路径
-    // templatePath: path.resolve(__dirname, './templates/mock_file.ejs'), // 模板路径
+    dirPath: path.resolve(process.cwd(), './mock'), // 生成的mock文件路径
+    templatePath: path.resolve(__dirname, './templates/mock_file.ejs'), // 模板路径
   },
   // ts 文件配置
   tsConfig: {
@@ -22,14 +22,14 @@ module.exports = {
     excludeGroup: [], // groupName
     includeApi: [], // 以 apiName/apiURI 字段为准
     excludeApi: [], // 以 apiName/apiURI 字段为准
-    dirPath: path.resolve(__dirname, './src/ts'), // 生成的ts文件路径
-    // templatePath: path.resolve(__dirname, './templates/ts_file.ejs'), // 模板路径
+    dirPath: path.resolve(process.cwd(), './src/ts'), // 生成的ts文件路径
+    templatePath: path.resolve(__dirname, './templates/ts_file.ejs'), // 模板路径
   },
   // 获取 eolinker 配置
   fetchConfig: {
-    // filePath: path.resolve(__dirname, './.mock-gen/eolinker.json'), // api 文件地址
+    filePath: path.resolve(__dirname, './eolinker.json'), // api 文件地址
     spaceKey: '', // url 参数 自行修改
-    projectHashKey: '',// url 参数 自行修改
+    projectHashKey: '', // url 参数 自行修改
 
     EOLINKER_URL: 'http://devapi.sangfor.com/index.php/v2/api_studio/management/api/export', // 数据请求地址 不用修改
     EO_SECRET_KEY: '4flxlRm554de754e234eca1041a716ed40b190fbf532fec', // Eolinker密钥 不用修改
@@ -39,26 +39,27 @@ module.exports = {
     '\\w+': [
       {
         type: 'array', // 任意数组的 rule 为 0-15
-        rule: '6-15',
-        // joi: 'joi.string()',
-        // ts: 'any[]'
+        mock_rule: '6-15',
       },
       {
-        args: [0, 6], // mock 规则的 参数
+        // 不指定 type 则视为全部类型
+        mock_args: [0, 6], // mock 规则的 参数
       },
       {
         type: 'boolean',
-        args: [0, 3],
+        mock_args: [0, 3],
       },
     ],
     code: {
-      content: 0,
-      rule: '',
+      mock_type: 0,
+      mock_rule: '',
       // important: true, // 强制覆盖
-      // type: [], // 字段类型要求
-      // rule: undefined, // mock
-      // content: "",
-      // strict: true, // 精准匹配字段名 默认为 false
+      // type: [], // 字段类型要求 string | string[]
+      // mock_rule: "1-2" // mock 匹配规则 {"prop|rule": content(args)}
+      // mock_type: "@integer()" // mock 匹配规则 {"prop|rule": content(args)}
+      // mock_args: [1,2,3] // mock 匹配规则 {"prop|rule": content(args)}
+      // joi_type: "joi.string()" // joi 匹配规则 { "prop": joi.string().required() }
+      // ts_type: "number" // ts 匹配规则 { "prop": "string"}
       // includeGroup: [], // 某个组中起作用
       // excludeGroup: [], // 某个组中不起作用
       // includeApi: [], // 某个 api 中起作用
@@ -67,8 +68,8 @@ module.exports = {
     id: '@id()', // 字段出现 id
     title: '@ctitle(10, 100)', // 字段出现title
     message: {
-      rule: '',
-      content: '@cparagraph()',
+      mock_rule: '',
+      mock_type: '@cparagraph()',
     },
     name: '@cname()',
     person: '@cname()',
@@ -76,22 +77,16 @@ module.exports = {
     url$: '@url()',
     desc: '@cparagraph()',
     '^ops': {
-      content: [0, 1],
-      rule: '1',
+      mock_type: [0, 1],
+      mock_rule: '1',
     },
     time$: '@datetime("yyyy年MM月")',
     total: {
-      rule: '',
-      content: '@integer(8, 15)',
+      mock_rule: '',
+      mock_type: '@integer(8, 15)',
     },
     photo: "@image('400x400')",
     image: '@image()',
     email: '@email()', // 匹配任意类型
-    // // 类型为int 且精准匹配为 code 时替换为 0
-    // code: { type: "int", content: 0, strict: true },
-    // code: { type: ["int"], content: 0, strict: true },
-    customer_type: {
-      rule: '+1',
-    },
   },
 }

@@ -3,14 +3,9 @@ import logger from '../utils/logger'
 import { convertToTs } from '../convert'
 import { API_REQUEST_TYPE } from '../constant'
 import { ensureFile, appendFile, writeFile } from 'fs-extra'
-import {
-  shouldGenerateApi,
-  normalizeFilePath,
-  normalizeRootName,
-  normalizeTsData,
-  normalizeFileData,
-} from './utils'
+import { shouldGenerateApi, normalizeFilePath, normalizeFileData } from './utils'
 import getMockConfig from '../utils/get_mock_config'
+import { normalizeRootName } from '../utils/normalize_prop_name'
 
 // 是否已经写入过该文件 适配同一个url 不同的 method
 const writeSet = new Set()
@@ -22,7 +17,7 @@ const writeSet = new Set()
  * @param {boolean} isAppend 是否追加到文件
  */
 async function handleWriteFile(apiConfig: ApiListItem, data: Record<string, any>) {
-  const { tsConfig } = await getMockConfig(true)
+  const { tsConfig } = getMockConfig(true)
   const { baseInfo } = apiConfig
 
   // 文件路径
@@ -36,9 +31,9 @@ async function handleWriteFile(apiConfig: ApiListItem, data: Record<string, any>
   const fileData = await renderFile(tsConfig.templatePath, {
     method: API_REQUEST_TYPE.findByValue(baseInfo.apiRequestType)!.key,
     rootName: normalizeRootName(baseInfo),
-    body: normalizeTsData('BodyParam', data.request.body),
-    query: normalizeTsData('QueryParam', data.request.query),
-    response: normalizeTsData('Response', data.response),
+    body: data.body || {},
+    query: data.query || {},
+    response: data.response || {},
     name: baseInfo.apiName,
     uri: baseInfo.apiURI,
   })

@@ -1,7 +1,14 @@
 import { API_REQUEST_PARAM_TYPE as TYPE, API_PARAM_REQUIRED } from '../../constant'
 import getStructMap from '../../utils/get_struct_map'
 
-import { judgeGenerateEnum, normalizeParam, normalizeParamType, renderJoiEnum } from '../utils'
+import {
+  judgeGenerateEnum,
+  matchCustomRule,
+  normalizeParam,
+  normalizeParamType,
+  renderJoiEnum,
+} from '../utils'
+import convertJoiConfig from './convert_joi_config'
 
 /**
  * @description 解析配置得到 joi 数据 **暂时不处理 headers 参数**
@@ -14,7 +21,16 @@ function convertToJoi(apiConfig: ApiListItem) {
   const bodyParams = generateJoi(requestInfo, apiConfig, true) // body 参数
   const queryParams = generateJoi(urlParam, apiConfig) // query 参数
   const restfulParams = generateJoi(restfulParam, apiConfig) // restful参数
-  return { bodyParams, queryParams, restfulParams }
+  return {
+    bodyParams: convertJoiConfig(bodyParams),
+    queryParams: convertJoiConfig(queryParams),
+    restfulParams: convertJoiConfig(restfulParams),
+  }
+}
+export interface ConvertJoiResult {
+  bodyParams: Record<string, any>
+  queryParams: Record<string, any>
+  restfulParams: Record<string, any>
 }
 
 /**
@@ -28,18 +44,17 @@ function generateJoi(
   schemaList: ParamItemSchema[],
   apiConfig: ApiListItem,
   strict = false
-): Record<string, string[]> | string[] {
+): Record<string, string[]> {
   const structMap = getStructMap(true)
-  return normalizeParam(schemaList).reduce(async (result, schema) => {
+  return normalizeParam(schemaList).reduce((result, schema) => {
     const { structureID, paramNotNull, paramType } = schema
     if (schema.hasOwnProperty('structureID')) {
       const struct = structMap.get(structureID!)?.struct
       if (!struct) return result
-      const args = [struct, apiConfig, strict] as const
-      return { ...result, ...generateJoi(...args) }
+      return { ...result, ...generateJoi(struct, apiConfig, strict) }
     }
 
-    const content = await schemaToJoi(schema, apiConfig, strict)
+    const content = schemaToJoi(schema, apiConfig, strict) as string[]
     if (content.length <= 0) return result // 为空直接返回
     // 是否为必填项
     const required = API_PARAM_REQUIRED.when(paramNotNull, 'required')
@@ -59,16 +74,16 @@ function generateJoi(
  * @param strict 是否精确匹配
  * @returns
  */
-async function schemaToJoi(schema: ParamItemSchema, apiConfig: ApiListItem, strict = false) {
+function schemaToJoi(schema: ParamItemSchema, apiConfig: ApiListItem, strict = false) {
   // 获取参数的类型字符串 同时处理自定义数据结构
   const type = normalizeParamType(schema)
 
+  // 自定义渲染规则
+  const bindMatchRule = matchCustomRule('joi', schema, apiConfig)
   // 获取枚举值
-  const shouldGenerate = await judgeGenerateEnum('joi', schema, apiConfig)
+  const shouldGenerate = judgeGenerateEnum(schema, bindMatchRule)
 
-  if (shouldGenerate !== false) {
-    return renderJoiEnum(shouldGenerate.joi, type)
-  }
+  if (shouldGenerate) return renderJoiEnum(shouldGenerate.joi_type, type)
 
   // 判断类型
   switch (type) {

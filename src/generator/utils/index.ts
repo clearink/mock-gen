@@ -1,7 +1,5 @@
-export * from './normalize_ts_data'
 export { default as flatGroupList } from './flat_group_list'
 export { default as findUpdateGroup } from './find_update_group'
-export { default as joiToString } from './joi_to_string'
 export { default as shouldGenerateApi } from './should_generate_api'
 export { default as normalizeFilePath } from './normalize_file_path'
 export { default as normalizeFileData } from './normalize_file_data'

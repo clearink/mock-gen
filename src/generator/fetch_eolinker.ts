@@ -9,7 +9,7 @@ import getMockConfig from '../utils/get_mock_config'
  * @returns {boolean}
  */
 export default async function fetchEolinker() {
-  const { fetchConfig } = await getMockConfig(true)
+  const { fetchConfig } = getMockConfig(true)
   const { filePath, spaceKey, projectHashKey, EOLINKER_URL, EO_SECRET_KEY } = fetchConfig
 
   const spinner = ora(logger.info('正在请求 api 数据', false)).start()
