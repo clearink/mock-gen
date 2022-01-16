@@ -16,14 +16,15 @@ const writeSet = new Set<string>() // TODO: 独立维护
  * @param mockData mock 数据
  * @param joiData joi 数据
  */
-async function handleWriteFile(apiConfig: ApiListItem, mockData: any, joiData: ConvertJoiResult) {
+async function handleWriteFile(
+  apiConfig: ApiListItem,
+  mockData: any,
+  joiData: ConvertJoiResult,
+  filePath: string
+) {
   const { mockConfig } = getMockConfig(true)
   const { baseInfo, resultParamJsonType: responseType } = apiConfig
 
-  // 文件路径
-  const filePath = normalizeFilePath('js', baseInfo.apiURI, mockConfig.dirPath)
-
-  logger.info(`✌ 正在生成 mock 文件: ${filePath}`)
   // 是否追加
   const isAppend = writeSet.has(filePath)
 
@@ -63,6 +64,11 @@ export default async function generateMockFile(apiGroup: GroupListItem) {
     // 是否应该生成该 api
     if (!shouldGenerateApi(baseInfo, mockConfig)) continue
 
+    // 文件路径
+    const filePath = normalizeFilePath('js', baseInfo.apiURI, mockConfig.dirPath)
+
+    logger.info(`✌ 正在生成 mock 文件: ${filePath}`)
+
     // 生成 mock 数据
     const mockData = convertToMock(apiConfig)
 
@@ -70,7 +76,7 @@ export default async function generateMockFile(apiGroup: GroupListItem) {
     const joiData = convertToJoi(apiConfig)
 
     // 生成文件
-    await handleWriteFile(apiConfig, mockData, joiData)
+    await handleWriteFile(apiConfig, mockData, joiData, filePath)
 
     // 间隔 60ms 太快了内存会占满
     await new Promise((resolve) => setTimeout(resolve, 60))

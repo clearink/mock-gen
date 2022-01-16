@@ -16,13 +16,13 @@ const writeSet = new Set()
  * @param {object} fileData 文件数据
  * @param {boolean} isAppend 是否追加到文件
  */
-async function handleWriteFile(apiConfig: ApiListItem, data: Record<string, any>) {
+async function handleWriteFile(
+  apiConfig: ApiListItem,
+  data: Record<string, any>,
+  filePath: string
+) {
   const { tsConfig } = getMockConfig(true)
   const { baseInfo } = apiConfig
-
-  // 文件路径
-  const filePath = normalizeFilePath('ts', baseInfo.apiURI, tsConfig.dirPath)
-  logger.info(`✌ 正在生成 ts 文件: ${filePath}`)
 
   // 是否追加
   const isAppend = writeSet.has(filePath)
@@ -59,8 +59,12 @@ export default async function generateTsFile(apiGroup: GroupListItem) {
     // 是否应该生成该 api
     if (!shouldGenerateApi(baseInfo, tsConfig)) continue
 
+    // 文件路径
+    const filePath = normalizeFilePath('ts', baseInfo.apiURI, tsConfig.dirPath)
+    logger.info(`✌ 正在生成 ts 文件: ${filePath}`)
+
     // 生成文件
-    await handleWriteFile(apiConfig, convertToTs(apiConfig))
+    await handleWriteFile(apiConfig, convertToTs(apiConfig), filePath)
 
     // 间隔 100ms 太快了内存会占满
     await new Promise((resolve) => setTimeout(resolve, 100))
