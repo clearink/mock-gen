@@ -40,7 +40,8 @@
   },
   "scripts": {
     "dev": "npm run build -- -w",
-    "build": "rimraf lib && babel src -d lib --extensions \".ts\" --copy-files"
+    "build": "node ./scripts/build.js",
+    "build:script": "babel scripts -d scripts --extensions \".ts\""
   },
   "devDependencies": {
     "@types/ejs": "^3.1.0",

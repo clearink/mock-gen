@@ -47,7 +47,7 @@ function generateTs(schemaList: ParamItemSchema[], apiConfig: ApiListItem): Reco
     }
     // 是否为必填项
     const suffix = API_PARAM_REQUIRED.when(paramNotNull, 'required') ? '' : '?'
-    const paramKey = `${schema.paramKey}${suffix}`.replace(/\s/g, '')
+    const paramKey = `"${schema.paramKey}"${suffix}`.replace(/\s/g, '')
     return { ...result, [paramKey]: { type, content: content } }
   }, {})
 }

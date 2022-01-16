@@ -8,7 +8,7 @@ function compressName(parentName: string, name: string, maxLen: number) {
 
   const nameList = normalizeTypeName(name)
 
-  let normalized = parentList.concat(nameList).join('').replace(/\?/g, '')
+  let normalized = parentList.concat(nameList).join('')
 
   // 长度符合
   while (normalized.length > maxLen) {
@@ -47,13 +47,12 @@ export function normalizeTsData(
   return Object.entries(data).reduce((result, [name, config]) => {
     const { type, content } = config
     if (content === null || typeof content !== 'object') {
-      const prop = name.replace(/\s/g, '')
-      result[parentName] = { ...result[parentName], [prop]: content }
+      result[parentName] = { ...result[parentName], [name]: content }
       return { ...result }
     }
     // 如果是对象则需要计算出对应的 typeName
     // 最长不超过 24 个字符
-    const optimized = compressName(parentName, name, 24)
+    const optimized = compressName(parentName, name.replace(/\?|"/g, ''), 24)
     const suffix = type === 'array' ? '[]' : ''
     const typeName = `${optimized}${suffix}`
 
