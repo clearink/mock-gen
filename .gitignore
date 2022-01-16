@@ -4,3 +4,4 @@ yarn.lock
 /mock/
 /src/ts/
 /lib/
+.mock-gen/

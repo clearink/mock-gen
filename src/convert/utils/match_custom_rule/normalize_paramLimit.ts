@@ -27,7 +27,7 @@ export function normalizeParamLimit(
     ts_type: !ts_type, // 允许修改 ts 类型
   }
   let shouldMatch = false // 是否应该进行匹配
-  if (!edit.mock_rule && !edit.mock_type && !edit.mock_args && matchType === 'mock') {
+  if (!edit.mock_rule && !edit.mock_type && matchType === 'mock') {
     return { result, shouldMatch, edit }
   }
   if (!edit.joi_type && matchType === 'joi') return { result, edit, shouldMatch }
