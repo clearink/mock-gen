@@ -56,12 +56,10 @@ function generateJoi(
 
     const content = schemaToJoi(schema, apiConfig, strict) as string[]
     if (content.length <= 0) return result // 为空直接返回
+    // hack 如果为 string 类型 默认允许空串
+    if (TYPE.when(paramType, 'string')) content.push(".allow('')")
     // 是否为必填项
-    const required = API_PARAM_REQUIRED.when(paramNotNull, 'required')
-    const stringType = TYPE.when(paramType, 'string')
-
-    if (required && (stringType || !strict)) content.push(".allow('')")
-    if (required) content.push('.required()')
+    if (API_PARAM_REQUIRED.when(paramNotNull, 'required')) content.push('.required()')
     const paramKey = schema.paramKey.replace(/\s/g, '')
     return { ...result, [paramKey]: ['joi.'].concat(content as string[]) }
   }, {})
