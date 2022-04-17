@@ -23,7 +23,7 @@ function joiToString(joiConfig: string[] | Record<string, string[]>[]): string {
   return `{${str}}`
 }
 
-export default function convertJoiConfig(source: string[] | Record<string, string[]>) {
+export default function normalizeJoiData(source: string[] | Record<string, string[]>) {
   return Object.entries(source).reduce((result, [name, config]) => {
     return { ...result, [name]: joiToString(config) }
   }, {})

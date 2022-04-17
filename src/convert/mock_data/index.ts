@@ -1,13 +1,14 @@
+import { REPLACE_FLAG } from '../../constant'
 import getStructMap from '../../utils/get_struct_map'
 import {
+  CycleCache,
   renderMockEnum,
   matchCustomRule,
   normalizeParam, // 修正错误的属性名称
   judgeGenerateEnum,
   normalizeParamType,
 } from '../utils'
-import normalizeMockArgs, { REPLACE_FLAG } from './normalize_mock_args'
-
+import normalizeMockArgs from './normalize_mock_args'
 /**
  *
  * @param apiConfig api 配置
@@ -15,7 +16,8 @@ import normalizeMockArgs, { REPLACE_FLAG } from './normalize_mock_args'
  */
 function convertToMock(apiConfig: ApiListItem) {
   const { resultInfo } = apiConfig
-  return generateMock(resultInfo, apiConfig)
+  CycleCache.clear() // 清空 cache
+  return generateMock(resultInfo, apiConfig, [])
 }
 
 /**
@@ -23,15 +25,30 @@ function convertToMock(apiConfig: ApiListItem) {
  * @param apiConfig API 配置
  * @returns
  */
-function generateMock(schemaList: ParamItemSchema[], apiConfig: ApiListItem): Record<string, any> {
+function generateMock(
+  schemaList: ParamItemSchema[],
+  apiConfig: ApiListItem,
+  parentKeys: string[]
+): Record<string, any> {
   const structMap = getStructMap(true)
   return normalizeParam(schemaList).reduce((result, schema) => {
     if (schema.hasOwnProperty('structureID')) {
-      const struct = structMap.get(schema.structureID!)?.struct
+      const id = schema.structureID!
+      const struct = structMap.get(id)?.struct
       if (!struct) return result
-      return { ...result, ...generateMock(struct, apiConfig) }
+      return { ...result, ...generateMock(struct, apiConfig, parentKeys) }
     }
-    const { mock_rule, mock_type } = schemaToMock(schema, apiConfig)
+
+    const parents = parentKeys.concat(schema.paramKey)
+    const originalType = schema.originalType
+    if (CycleCache.shouldCheck(originalType)) {
+      CycleCache.set(parents, { type: originalType, depth: 4 })
+      if (CycleCache.isCycle(parents, originalType)) {
+        return result
+      }
+    }
+    const { mock_rule, mock_type } = schemaToMock(schema, apiConfig, parents)
+    CycleCache.delete(parents) // 当前数据
     const suffix = mock_rule ? `|${mock_rule}` : ''
     const paramKey = `${schema.paramKey}${suffix}`.replace(/\s/g, '')
     return { ...result, [paramKey]: mock_type }
@@ -44,7 +61,7 @@ function generateMock(schemaList: ParamItemSchema[], apiConfig: ApiListItem): Re
  * @param apiConfig api配置
  * @returns
  */
-function schemaToMock(schema: ParamItemSchema, apiConfig: ApiListItem) {
+function schemaToMock(schema: ParamItemSchema, apiConfig: ApiListItem, parentKeys: string[]) {
   // 获取参数的类型字符串 同时处理自定义数据结构
   const type = normalizeParamType(schema)
 
@@ -94,15 +111,14 @@ function schemaToMock(schema: ParamItemSchema, apiConfig: ApiListItem) {
     case 'array':
     case 'json':
     case 'object':
-      const { childList = [] } = schema
-      const childContent = generateMock(childList as ParamItemSchema[], apiConfig)
+      const childList = (schema.childList ?? []) as ParamItemSchema[]
+      const childContent = generateMock(childList, apiConfig, parentKeys)
       const isEmpty = Object.keys(childContent).length === 0
       const isArray = type === 'array'
       content = isEmpty && isArray ? content : childContent
   }
   const { mock_rule, mock_type, mock_args } = bindMatchRule({ mock_type: content })
   const mockType = normalizeMockArgs(schema, mock_args, mock_type)
-  // {"some_list|1-10":[{...someProp}]}
   if (type === 'array') return { mock_rule, mock_type: [mockType] }
   return { mock_rule, mock_type: mockType }
 }

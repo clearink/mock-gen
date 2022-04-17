@@ -31,4 +31,7 @@
 2. customMatchRule: 自定义匹配规则, 对象的 key 会被解析成正则
 
 ## TODO
+1. 继续完善生成树形结构的数据
+  - 已经完成: 生成 mock 树形结构数据
+  - 待完成: 生成 joi 与 ts 树形结构数据
 99999. 支持解析swagger.json

@@ -1,7 +1,8 @@
-const separator = '>>'
+import { DIRTY_SEPARATOR } from '../../constant'
+
 // 过滤函数 使用结构体或者 不存在 >> 直接略过
 const normalizeFilter = (item: ParamItemSchema) =>
-  item.hasOwnProperty('structureID') || !item.paramKey.includes(separator)
+  item.hasOwnProperty('structureID') || !item.paramKey.includes(DIRTY_SEPARATOR)
 /**
  *
  * @param {array|undefined} schemaList 字段配置
@@ -9,9 +10,10 @@ const normalizeFilter = (item: ParamItemSchema) =>
  */
 export default function normalizeParam(schemaList: ParamItemSchema[] = []) {
   for (let $schema of schemaList) {
+    $schema.originalType = $schema.originalType ?? $schema.paramType // 保存原有的 type 类型
     if (normalizeFilter($schema)) continue
     // 需要修正
-    const attrList = $schema.paramKey.split(separator)
+    const attrList = $schema.paramKey.split(DIRTY_SEPARATOR)
     let $schemaList = schemaList
     while (attrList.length > 1) {
       const attr = attrList.shift()

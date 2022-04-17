@@ -8,7 +8,7 @@ import {
   normalizeParamType,
   renderJoiEnum,
 } from '../utils'
-import convertJoiConfig from './convert_joi_config'
+import normalizeJoiData from './normalize_joi_data'
 
 /**
  * @description 解析配置得到 joi 数据 **暂时不处理 headers 参数**
@@ -22,9 +22,9 @@ function convertToJoi(apiConfig: ApiListItem) {
   const queryParams = generateJoi(urlParam, apiConfig) // query 参数
   const restfulParams = generateJoi(restfulParam, apiConfig) // restful参数
   return {
-    bodyParams: convertJoiConfig(bodyParams),
-    queryParams: convertJoiConfig(queryParams),
-    restfulParams: convertJoiConfig(restfulParams),
+    bodyParams: normalizeJoiData(bodyParams),
+    queryParams: normalizeJoiData(queryParams),
+    restfulParams: normalizeJoiData(restfulParams),
   }
 }
 export interface ConvertJoiResult {

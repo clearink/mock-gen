@@ -34,10 +34,11 @@ exports.<%= method %> = async (ctx, next) => {
   });
   try {
     const config = { convert: false, allowUnknown: true };
-    await bodySchema.validateAsync(body, config)
-    await querySchema.validateAsync(query, config)
-    await restfulSchema.validateAsync(params, config)
-
+    await Promise.all([
+      bodySchema.validateAsync(body, config),
+      querySchema.validateAsync(query, config),
+      restfulSchema.validateAsync(params, config)
+    ])
     await new Promise((resolve) => setTimeout(resolve, 300));
     <% if(arrayRoot) { _%>
       ctx.body = Mock.mock({"list|0-10":[<%- mock_data %>]}).list;

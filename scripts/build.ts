@@ -1,7 +1,7 @@
 // 打包命令
 import { resolve } from 'path'
 
-import { remove, copySync, realpathSync, ensureDir, ensureFile, copy, copyFile } from 'fs-extra'
+import { remove, realpathSync, ensureDir, ensureFile, copy, copyFile } from 'fs-extra'
 import { spawn } from 'child_process'
 
 const CWD = realpathSync(process.cwd()) // 当前运行环境
@@ -29,9 +29,11 @@ async function buildSource() {
     OUTPUT_PATH,
     '--ignore',
     ['./**/*.d.ts', './**/@types/*', './**/src/ts/*'].join(','),
-  ]
+  ].concat(process.argv.slice(2))
+
   const child = spawn('node', args)
   child.stderr.pipe(process.stderr)
+  child.stdout.pipe(process.stdout)
   return new Promise<void>((res, rej) => {
     child.on('exit', (code) => {
       code ? rej() : res()

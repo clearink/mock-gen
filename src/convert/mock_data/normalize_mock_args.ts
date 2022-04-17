@@ -1,4 +1,4 @@
-import { API_REQUEST_PARAM_TYPE as TYPE } from '../../constant'
+import { API_REQUEST_PARAM_TYPE as TYPE, REPLACE_FLAG } from '../../constant'
 
 export default function normalizeMockArgs(
   schema: ParamItemSchema,
@@ -34,5 +34,3 @@ export default function normalizeMockArgs(
     return mockType
   }
 }
-
-export const REPLACE_FLAG = '$$args$$'

@@ -6,7 +6,8 @@ interface ParamValueEnum {
 
 interface ParamItemSchema {
   paramNotNull: '0' | '1'
-  paramType: string | number
+  paramType: string | number // 被修正过
+  originalType: string // 原始的类型
   paramKey: string
   structureID?: number
   paramLimit?: string
@@ -46,6 +47,7 @@ interface StructDataSchema {
   paramKey: string
   paramNotNull: ParamItemSchema['paramNotNull']
   paramType: ParamItemSchema['paramType']
+  originalType: ParamItemSchema['originalType']
   paramValueList?: ParamItemSchema['paramValueList']
   childList?: ParamItemSchema['childList']
 }

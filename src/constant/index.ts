@@ -70,3 +70,7 @@ export const API_REQUEST_PARAM_TYPE = new Constant([
   { label: 'char', value: 'char', key: 'char' },
   { label: 'enum', value: '17', key: 'enum' },
 ])
+
+export const REPLACE_FLAG = '$$args$$'
+export const DIRTY_SEPARATOR = '>>'
+export const RULE_CACHE_SEPARATOR = '=>'
