@@ -19,6 +19,10 @@ function convertToMock(apiConfig: ApiListItem) {
   CycleCache.clear() // 清空 cache
   const mockRaw = generateMock(resultInfo, apiConfig, [])
   console.log(CycleCache)
+  // mockRaw['tree']['children'] = `function(){
+  //   const template = ${JSON.stringify(CycleCache.get(['tree'])?.mock_type)};
+  //   return Mock.mock(template)
+  // }`
   return mockRaw
 }
 
@@ -42,18 +46,18 @@ function generateMock(
     }
 
     const parents = parentKeys.concat(schema.paramKey)
-    const originalType = schema.originalType
-    if (CycleCache.shouldCheck(originalType)) {
-      CycleCache.set(parents, { type: originalType })
-      if (CycleCache.isCycle(parents, originalType)) {
-        return result
+    const type = schema.originalType
+    if (CycleCache.shouldCheck(type)) {
+      if (CycleCache.isCycle(parents, type)) {
+        return { ...result, [schema.paramKey]: `$$TREE_CYCLE_${type}$$` }
       }
+      CycleCache.set(parents, { type })
     }
     const { mock_rule, mock_type } = schemaToMock(schema, apiConfig, parents)
-    // if (CycleCache.isCycle(parents, originalType)) {
-    //   console.log('cycle', parents, CycleCache, mock_type)
-    //   // CycleCache.set
-    // } else
+    if (CycleCache.isCycle(parents, type)) {
+      const cache = { type, mock_rule, mock_type, paths: parents }
+      CycleCache.set(parents, cache)
+    }
     CycleCache.delete(parents) // 当前数据
     const suffix = mock_rule ? `|${mock_rule}` : ''
     const paramKey = `${schema.paramKey}${suffix}`.replace(/\s/g, '')

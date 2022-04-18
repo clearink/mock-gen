@@ -5,6 +5,9 @@ import { RULE_CACHE_SEPARATOR as SEPARATOR, API_REQUEST_PARAM_TYPE as TYPE } fro
  */
 interface CacheValue {
   type: string | number
+  paths?: string[]
+  mock_rule?: string
+  mock_type?: any
 }
 type CacheKey = string | number
 class CycleCache {
@@ -33,14 +36,10 @@ class CycleCache {
   // 检查是否出现了循环
   public isCycle(keys: string[], type: CacheValue['type']) {
     const parents = keys.concat()
-    const map = new Map<string, CacheValue>()
     while (parents.length) {
       if (this.has(parents)) {
         const { type: $type } = this.get(parents)!
-        if ($type === type) {
-          if (depth === 0) return true
-          this.set(parents, { type, depth: depth - 1 })
-        }
+        if ($type === type) return true
       }
       parents.pop()
     }
