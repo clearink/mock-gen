@@ -17,7 +17,9 @@ import normalizeMockArgs from './normalize_mock_args'
 function convertToMock(apiConfig: ApiListItem) {
   const { resultInfo } = apiConfig
   CycleCache.clear() // 清空 cache
-  return generateMock(resultInfo, apiConfig, [])
+  const mockRaw = generateMock(resultInfo, apiConfig, [])
+  console.log(CycleCache)
+  return mockRaw
 }
 
 /**
@@ -42,12 +44,16 @@ function generateMock(
     const parents = parentKeys.concat(schema.paramKey)
     const originalType = schema.originalType
     if (CycleCache.shouldCheck(originalType)) {
-      CycleCache.set(parents, { type: originalType, depth: 4 })
+      CycleCache.set(parents, { type: originalType })
       if (CycleCache.isCycle(parents, originalType)) {
         return result
       }
     }
     const { mock_rule, mock_type } = schemaToMock(schema, apiConfig, parents)
+    // if (CycleCache.isCycle(parents, originalType)) {
+    //   console.log('cycle', parents, CycleCache, mock_type)
+    //   // CycleCache.set
+    // } else
     CycleCache.delete(parents) // 当前数据
     const suffix = mock_rule ? `|${mock_rule}` : ''
     const paramKey = `${schema.paramKey}${suffix}`.replace(/\s/g, '')

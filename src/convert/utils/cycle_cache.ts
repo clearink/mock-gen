@@ -5,19 +5,18 @@ import { RULE_CACHE_SEPARATOR as SEPARATOR, API_REQUEST_PARAM_TYPE as TYPE } fro
  */
 interface CacheValue {
   type: string | number
-  depth: number
 }
-
+type CacheKey = string | number
 class CycleCache {
-  private cache: Map<string | number, CacheValue> = new Map()
-  public has(key: string | number) {
-    return this.cache.has(key)
+  private cache: Map<string, CacheValue> = new Map()
+  public has(keys: CacheKey[]) {
+    return this.cache.has(keys.join(SEPARATOR))
   }
-  public set(keys: string[], value: CacheValue) {
+  public set(keys: CacheKey[], value: CacheValue) {
     this.cache.set(keys.join(SEPARATOR), value)
   }
-  public get(key: string | number) {
-    return this.cache.get(key)
+  public get(keys: CacheKey[]) {
+    return this.cache.get(keys.join(SEPARATOR))
   }
   public delete(keys: string[]) {
     const key = keys.join(SEPARATOR)
@@ -26,9 +25,7 @@ class CycleCache {
   public clear() {
     this.cache.clear()
   }
-  public get size() {
-    return this.cache.size
-  }
+
   public shouldCheck(type: string) {
     return !TYPE.findByValue(type)
   }
@@ -36,13 +33,13 @@ class CycleCache {
   // 检查是否出现了循环
   public isCycle(keys: string[], type: CacheValue['type']) {
     const parents = keys.concat()
+    const map = new Map<string, CacheValue>()
     while (parents.length) {
-      const cacheKey = parents.join(SEPARATOR)
-      if (this.cache.has(cacheKey)) {
-        const { type: $type, depth } = this.cache.get(cacheKey)!
+      if (this.has(parents)) {
+        const { type: $type } = this.get(parents)!
         if ($type === type) {
           if (depth === 0) return true
-          this.cache.set(cacheKey, { type, depth: depth - 1 })
+          this.set(parents, { type, depth: depth - 1 })
         }
       }
       parents.pop()
