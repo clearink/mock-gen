@@ -10,28 +10,17 @@
  */
 exports.<%= method %> = async (ctx, next) => {
   // 路由参数 query 参数 body 参数
-  const { params, query, body } = ctx.request ?? {};
+  const { params, query, body } = ctx.request || {};
 
   // 验证 body 参数
-  const bodySchema = joi.object({
-    <% for(const [name, config] of Object.entries(joi_body)) { _%>
-      "<%- name %>": <%- config _%>,
-    <% } _%>
-  });
+  const bodySchema = joi.object(<%- joi_body %>);
 
   // 验证 query 参数
-  const querySchema = joi.object({
-    <% for(const [name, config] of Object.entries(joi_query)) { _%>
-      "<%- name %>": <%- config _%>,
-    <% } _%>
-  });
+  const querySchema = joi.object(<%- joi_query %>);
 
   // 验证 restful 参数
-  const restfulSchema = joi.object({
-    <% for(const [name, config] of Object.entries(joi_restful)) { _%>
-      "<%- name %>": <%- config _%>,
-    <% } _%>
-  });
+  const restfulSchema = joi.object(<%- joi_restful %>);
+
   try {
     const config = { convert: false, allowUnknown: true };
     await Promise.all([
@@ -39,6 +28,7 @@ exports.<%= method %> = async (ctx, next) => {
       querySchema.validateAsync(query, config),
       restfulSchema.validateAsync(params, config)
     ])
+
     await new Promise((resolve) => setTimeout(resolve, 300));
     <% if(arrayRoot) { _%>
       ctx.body = Mock.mock({"list|0-10":[<%- mock_data %>]}).list;
@@ -49,6 +39,5 @@ exports.<%= method %> = async (ctx, next) => {
     ctx.throw(400, error.message);
   }
 };
-  
-  
-  
+
+

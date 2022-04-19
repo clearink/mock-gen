@@ -28,9 +28,9 @@ function convertToJoi(apiConfig: ApiListItem) {
   }
 }
 export interface ConvertJoiResult {
-  bodyParams: Record<string, any>
-  queryParams: Record<string, any>
-  restfulParams: Record<string, any>
+  bodyParams: string
+  queryParams: string
+  restfulParams: string
 }
 
 /**

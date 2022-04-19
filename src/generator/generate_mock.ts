@@ -33,10 +33,10 @@ async function handleWriteFile(
   // 组装数据                           // 模板路径
   const fileData = await renderFile(mockConfig.templatePath, {
     method: API_REQUEST_TYPE.findByValue(baseInfo.apiRequestType)?.key,
-    mock_data: JSON.stringify(mockData),
-    joi_body: joiData.bodyParams || {},
-    joi_query: joiData.queryParams || {},
-    joi_restful: joiData.restfulParams || {},
+    mock_data: mockData,
+    joi_body: joiData.bodyParams,
+    joi_query: joiData.queryParams,
+    joi_restful: joiData.restfulParams,
     name: baseInfo.apiName,
     uri: baseInfo.apiURI,
     isAppend,

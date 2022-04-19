@@ -1,30 +1,24 @@
-const isPlainObject = (obj: any) => obj !== null && typeof obj === 'object'
-
+import { isArray, isObject, isString } from '../../utils/validate_type'
 /**
  * @description 解析 joi 配置
- * @param {any[]|Record<string,any>} joiConfig joi 配置
+ * @param {any[]|Record<string,any>} template joi 配置
  */
-function joiToString(joiConfig: string[] | Record<string, string[]>[]): string {
-  const initialValue = Array.isArray(joiConfig) ? '' : {} // 初始值
-  const content = Object.entries(joiConfig).reduce((result, [key, value]) => {
-    const isString = typeof result === 'string'
-    const content = isPlainObject(value) ? joiToString(value) : value
-    if (isString) return result + content
+type TemplateType = string[] | Record<string, string[]>
+export default function normalizeJoiData<T extends TemplateType>(template: T): string {
+  const initialValue = isArray(template) ? '' : {} // 初始值
+
+  const content = Object.entries(template).reduce((result, [key, value]) => {
+    const content = isObject<T>(value) ? normalizeJoiData(value) : value
+    if (isString(result)) return result + content
     return { ...result, [key]: content }
   }, initialValue)
 
-  if (typeof content === 'string') return content
-  if (Object.keys(content).length === 0) return ''
+  if (isString(content)) return content
+
   // 转成 string
   const str = Object.entries(content).reduce((result, [key, value], index) => {
     const separator = index === 0 ? '' : ','
     return `${result}${separator}"${key}":${value}`
   }, '')
   return `{${str}}`
-}
-
-export default function normalizeJoiData(source: string[] | Record<string, string[]>) {
-  return Object.entries(source).reduce((result, [name, config]) => {
-    return { ...result, [name]: joiToString(config) }
-  }, {})
 }

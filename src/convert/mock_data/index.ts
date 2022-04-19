@@ -9,6 +9,8 @@ import {
   normalizeParamType,
 } from '../utils'
 import normalizeMockArgs from './normalize_mock_args'
+import normalizeMockData from './normalize_mock_data'
+import renderCycleTemplate from './render_cycle_template'
 /**
  *
  * @param apiConfig api 配置
@@ -17,13 +19,8 @@ import normalizeMockArgs from './normalize_mock_args'
 function convertToMock(apiConfig: ApiListItem) {
   const { resultInfo } = apiConfig
   CycleCache.clear() // 清空 cache
-  const mockRaw = generateMock(resultInfo, apiConfig, [])
-  console.log(CycleCache)
-  // mockRaw['tree']['children'] = `function(){
-  //   const template = ${JSON.stringify(CycleCache.get(['tree'])?.mock_type)};
-  //   return Mock.mock(template)
-  // }`
-  return mockRaw
+  const template = generateMock(resultInfo, apiConfig)
+  return normalizeMockData(renderCycleTemplate(template))
 }
 
 /**
@@ -34,7 +31,7 @@ function convertToMock(apiConfig: ApiListItem) {
 function generateMock(
   schemaList: ParamItemSchema[],
   apiConfig: ApiListItem,
-  parentKeys: string[]
+  parents: string[] = []
 ): Record<string, any> {
   const structMap = getStructMap(true)
   return normalizeParam(schemaList).reduce((result, schema) => {
@@ -42,26 +39,19 @@ function generateMock(
       const id = schema.structureID!
       const struct = structMap.get(id)?.struct
       if (!struct) return result
-      return { ...result, ...generateMock(struct, apiConfig, parentKeys) }
+      return { ...result, ...generateMock(struct, apiConfig, parents) }
     }
 
-    const parents = parentKeys.concat(schema.paramKey)
+    const paths = parents.concat(schema.paramKey)
     const type = schema.originalType
     if (CycleCache.shouldCheck(type)) {
-      if (CycleCache.isCycle(parents, type)) {
-        return { ...result, [schema.paramKey]: `$$TREE_CYCLE_${type}$$` }
-      }
-      CycleCache.set(parents, { type })
+      CycleCache.set(paths, { paths, type })
+      if (CycleCache.isCycle(paths, type)) return result
     }
-    const { mock_rule, mock_type } = schemaToMock(schema, apiConfig, parents)
-    if (CycleCache.isCycle(parents, type)) {
-      const cache = { type, mock_rule, mock_type, paths: parents }
-      CycleCache.set(parents, cache)
-    }
-    CycleCache.delete(parents) // 当前数据
-    const suffix = mock_rule ? `|${mock_rule}` : ''
-    const paramKey = `${schema.paramKey}${suffix}`.replace(/\s/g, '')
-    return { ...result, [paramKey]: mock_type }
+    const { mock_rule, mock_type } = schemaToMock(schema, apiConfig, paths)
+    CycleCache.delete(paths) // 当前数据
+    const paramKey = `${schema.paramKey}`.replace(/\s/g, '')
+    return { ...result, [paramKey]: { mock_type, mock_rule } }
   }, {})
 }
 
