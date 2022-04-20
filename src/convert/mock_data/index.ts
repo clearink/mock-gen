@@ -51,7 +51,7 @@ function generateMock(
     const { mock_rule, mock_type } = schemaToMock(schema, apiConfig, paths)
     CycleCache.delete(paths) // 当前数据
     const paramKey = `${schema.paramKey}`.replace(/\s/g, '')
-    return { ...result, [paramKey]: { mock_type, mock_rule } }
+    return { ...result, [paramKey]: { mock_rule, mock_type } }
   }, {})
 }
 

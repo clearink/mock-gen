@@ -1,20 +1,20 @@
 import { CycleCache } from '../utils'
-const isObject = (obj: any): obj is object => obj !== null && typeof obj === 'object'
-function get(obj: Record<string, any>, paths: string[]) {
-  let target = { ...obj }
+import { isObject, isArray, isString } from '../../utils/validate_type'
+import normalizeMockData from './normalize_mock_data'
+function get($target: MockTemplateType | [MockTemplateType], paths: string[]) {
+  let target = isArray($target) ? $target[0] : $target
+  if (!isObject(target)) return false
   for (const path of paths) {
-    if (target.hasOwnProperty(path) && isObject(target[path])) {
-      target = { ...target[path] }
-    } else return target
+    // 不含有该字段 or target 是字符串的 返回 false
+    if (!target.hasOwnProperty(path) || isString(target)) return false
+    const { mock_type, mock_rule } = target[path] as MockTemplateValue
+    if (!isObject(mock_type)) return false
+    target = isArray(mock_type) ? mock_type[0] : mock_type
   }
-  return target
+  return isString(target) ? false : target
 }
 
-function set() {}
-
-export default function renderCycleTemplate(template: Record<string, any>) {
-  // console.log('template', template)
-  console.log(CycleCache.values)
+export default function renderCycleTemplate(template: MockTemplateType | [MockTemplateType]) {
   /**
    * 过程
    * 1. 遍历 CycleCache
@@ -23,19 +23,20 @@ export default function renderCycleTemplate(template: Record<string, any>) {
   for (let cache of CycleCache.values) {
     const { type: $type, paths } = cache
     if (paths.length < 2) continue
-    const nodeTemplate = template.a.b.tree
-    template.a.b.tree.children = `function(){
-        return Mock.mock(${JSON.stringify(nodeTemplate)})
-      }`
-    // const templatePaths = paths.slice(0, -1)
-    // const nodeTemplate = _.get(template, templatePaths)
-    // _.set(
-    //   template,
-    //   paths,
-    //   `function(){
-    //   return Mock.mock(${JSON.stringify(nodeTemplate)})
-    // }`
-    // )
+    const parents = paths.slice(0, -1)
+    const target = get(template, parents)
+    if (target === false) console.warn(`no such path: ${parents.join('=>')}`)
+    else {
+      const paramKey = paths.slice(-1)[0]
+      target[paramKey] = {
+        render_raw: true,
+        mock_type: `function ({ parsedName, context }) {
+        const template = getCycleTemplate(context.templateRoot, ${JSON.stringify(paths)})          
+        return Mock.mock(loop(3))
+      }`,
+      }
+    }
+    return template
   }
 
   return template
