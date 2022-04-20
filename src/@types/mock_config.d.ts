@@ -34,4 +34,7 @@ interface CustomMockRule extends Partial<ConfigSchemaItem> {
   ts_type?: any
   // 强制匹配
   important?: boolean
+
+  // 树形结构数据
+  cycle_path?: string[]
 }

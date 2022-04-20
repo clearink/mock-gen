@@ -20,6 +20,7 @@ function convertToMock(apiConfig: ApiListItem) {
   const { resultInfo } = apiConfig
   CycleCache.clear() // 清空 cache
   const template = generateMock(resultInfo, apiConfig)
+  console.log('CycleCache', CycleCache.values)
   return normalizeMockData(renderCycleTemplate(template))
 }
 
@@ -48,10 +49,15 @@ function generateMock(
       CycleCache.set(paths, { paths, type })
       if (CycleCache.isCycle(paths, type)) return result
     }
-    const { mock_rule, mock_type } = schemaToMock(schema, apiConfig, paths)
-    CycleCache.delete(paths) // 当前数据
+    const { mock_rule, mock_type, cycle_path } = schemaToMock(schema, apiConfig, paths)
+    if (cycle_path) {
+      // 自定义树形结构
+      console.log(cycle_path, paths)
+      CycleCache.set(paths, { type, paths: cycle_path, mock_rule })
+      return result
+    } else CycleCache.delete(paths) // 当前数据
     const paramKey = `${schema.paramKey}`.replace(/\s/g, '')
-    return { ...result, [paramKey]: { mock_rule, mock_type } }
+    return { ...result, [paramKey]: { mock_rule, mock_type, cycle_path } }
   }, {})
 }
 
@@ -117,10 +123,10 @@ function schemaToMock(schema: ParamItemSchema, apiConfig: ApiListItem, parentKey
       const isArray = type === 'array'
       content = isEmpty && isArray ? content : childContent
   }
-  const { mock_rule, mock_type, mock_args } = bindMatchRule({ mock_type: content })
+  const { mock_rule, mock_type, mock_args, cycle_path } = bindMatchRule({ mock_type: content })
   const mockType = normalizeMockArgs(schema, mock_args, mock_type)
-  if (type === 'array') return { mock_rule, mock_type: [mockType] }
-  return { mock_rule, mock_type: mockType }
+  if (type === 'array') return { mock_rule, cycle_path, mock_type: [mockType] }
+  return { mock_rule, cycle_path, mock_type: mockType }
 }
 
 export default convertToMock

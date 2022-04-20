@@ -1,6 +1,6 @@
 import { CycleCache } from '../utils'
 import { isObject, isArray, isString } from '../../utils/validate_type'
-import normalizeMockData from './normalize_mock_data'
+
 function get($target: MockTemplateType | [MockTemplateType], paths: string[]) {
   let target = isArray($target) ? $target[0] : $target
   if (!isObject(target)) return false

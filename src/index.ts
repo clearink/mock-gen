@@ -25,3 +25,5 @@ program
 //   .action(dev)
 
 program.parse()
+
+export { default as getCycleTemplate } from './utils/get_cycle_template'

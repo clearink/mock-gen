@@ -18,6 +18,7 @@ export function normalizeParamLimit(
   paramLimit?: string
 ) {
   const result = normalizeSchemaLimit(paramLimit) as Required<CustomMockRule>
+
   const { mock_args, mock_rule, mock_type, joi_type, ts_type } = result
   const edit = {
     mock_rule: !mock_rule, // 允许修改 rule
