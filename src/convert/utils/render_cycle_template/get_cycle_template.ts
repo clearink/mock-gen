@@ -1,6 +1,6 @@
 import { isObject, isArray, isString } from '../../../utils/validate_type'
 
-export default function get($target: MockTemplateType | [MockTemplateType], paths: string[]) {
+export default function getCycleTemplate($target: MockTemplateType | [MockTemplateType], paths: string[]) {
   let target = isArray($target) ? $target[0] : $target
   if (!isObject(target)) return false
   for (const path of paths) {
