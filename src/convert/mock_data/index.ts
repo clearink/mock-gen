@@ -10,7 +10,7 @@ import {
 } from '../utils'
 import normalizeMockArgs from './normalize_mock_args'
 import normalizeMockData from './normalize_mock_data'
-import renderCycleTemplate from './render_cycle_template'
+import renderCycleTemplate from '../utils/render_cycle_template'
 /**
  *
  * @param apiConfig api 配置
@@ -20,7 +20,6 @@ function convertToMock(apiConfig: ApiListItem) {
   const { resultInfo } = apiConfig
   CycleCache.clear() // 清空 cache
   const template = generateMock(resultInfo, apiConfig)
-  console.log('CycleCache', CycleCache.values)
   return normalizeMockData(renderCycleTemplate(template))
 }
 
@@ -36,6 +35,7 @@ function generateMock(
 ): Record<string, any> {
   const structMap = getStructMap(true)
   return normalizeParam(schemaList).reduce((result, schema) => {
+    const { paramKey, originalType: paramType } = schema
     if (schema.hasOwnProperty('structureID')) {
       const id = schema.structureID!
       const struct = structMap.get(id)?.struct
@@ -43,20 +43,22 @@ function generateMock(
       return { ...result, ...generateMock(struct, apiConfig, parents) }
     }
 
-    const paths = parents.concat(schema.paramKey)
-    const type = schema.originalType
-    if (CycleCache.shouldCheck(type)) {
-      CycleCache.set(paths, { paths, type })
-      if (CycleCache.isCycle(paths, type)) return result
+    const fullPaths = parents.concat(paramKey)
+
+    if (CycleCache.shouldCheck(paramType)) {
+      // 为了拿到对应的 mock_rule 不得已多循环了一次
+      // 所以要去除用于获取模板的数据
+      const cyclePath = parents.slice(0, -1)
+      const cache = { parents: cyclePath, paramType, paramKey, cycle_path: cyclePath }
+      CycleCache.set(fullPaths, cache)
+      if (CycleCache.isCycle(parents, paramType)) return result
     }
-    const { mock_rule, mock_type, cycle_path } = schemaToMock(schema, apiConfig, paths)
+    const { mock_rule, mock_type, cycle_path } = schemaToMock(schema, apiConfig, fullPaths)
+
     if (cycle_path) {
-      // 自定义树形结构
-      console.log(cycle_path, paths)
-      CycleCache.set(paths, { type, paths: cycle_path, mock_rule })
-      return result
-    } else CycleCache.delete(paths) // 当前数据
-    const paramKey = `${schema.paramKey}`.replace(/\s/g, '')
+      const cache = { paramType, parents, paramKey, cycle_path, mock_rule }
+      CycleCache.set(fullPaths, cache)
+    } else CycleCache.delete(fullPaths) // 当前数据
     return { ...result, [paramKey]: { mock_rule, mock_type, cycle_path } }
   }, {})
 }

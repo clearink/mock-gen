@@ -47,7 +47,7 @@ function generateJoi(
 ): Record<string, string[]> {
   const structMap = getStructMap(true)
   return normalizeParam(schemaList).reduce((result, schema) => {
-    const { structureID, paramNotNull, paramType } = schema
+    const { structureID, paramNotNull, paramType, paramKey } = schema
     if (schema.hasOwnProperty('structureID')) {
       const struct = structMap.get(structureID!)?.struct
       if (!struct) return result
@@ -60,7 +60,6 @@ function generateJoi(
     if (TYPE.when(paramType, 'string')) content.push(".allow('')")
     // 是否为必填项
     if (API_PARAM_REQUIRED.when(paramNotNull, 'required')) content.push('.required()')
-    const paramKey = schema.paramKey.replace(/\s/g, '')
     return { ...result, [paramKey]: ['joi.'].concat(content as string[]) }
   }, {})
 }

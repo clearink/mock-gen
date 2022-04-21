@@ -1,12 +1,18 @@
-import { RULE_CACHE_SEPARATOR as SEPARATOR, API_REQUEST_PARAM_TYPE as TYPE } from '../../constant'
+import {
+  RULE_CACHE_SEPARATOR as SEPARATOR,
+  API_REQUEST_PARAM_TYPE as TYPE,
+} from '../../../constant'
 
 /**
  * @description 记录循环依赖的结构体或自定义的树形数据
  */
 type CacheKey = string | number
-interface CacheValue {
-  type: CacheKey
-  paths: string[]
+export interface CacheValue {
+  paramType: CacheKey // 当前字段的类型
+  paramKey: string // 字段名称
+  parents: string[] // 父级路径
+  cycle_path: string[] // 树形结构路径
+  mock_rule?: string // mock 规则
 }
 class CycleCache {
   private cache: Map<string, CacheValue> = new Map()
@@ -32,21 +38,20 @@ class CycleCache {
     this.cache.clear()
   }
 
-  public shouldCheck(type: string) {
-    return !TYPE.findByValue(type)
+  public shouldCheck(paramType: string | number) {
+    return !TYPE.findByValue(paramType)
   }
 
   // 检查是否出现了循环
-  public isCycle(keys: string[], type: CacheValue['type']) {
+  public isCycle(keys: string[], type: CacheValue['paramType']) {
     const parents = keys.concat()
     const set = new Set<CacheKey>()
     while (parents.length) {
-      if (this.has(parents)) {
-        const { type: $type } = this.get(parents)!
-        if ($type === type && set.has(type)) return true
-        set.add($type)
-      }
+      const cache = this.get(parents)
       parents.pop()
+      if (!cache || !this.shouldCheck(cache.paramType)) continue
+      if (cache.paramType === type && set.has(type)) return true
+      set.add(cache.paramType)
     }
     return false
   }

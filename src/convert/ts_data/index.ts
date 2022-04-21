@@ -35,7 +35,7 @@ function convertToTs(apiConfig: ApiListItem) {
 function generateTs(schemaList: ParamItemSchema[], apiConfig: ApiListItem): Record<string, any> {
   const structMap = getStructMap(true)
   return normalizeParam(schemaList).reduce((result, schema) => {
-    const { structureID, paramNotNull } = schema
+    const { structureID, paramNotNull, paramKey } = schema
     if (schema.hasOwnProperty('structureID')) {
       const struct = structMap.get(structureID!)?.struct
       if (!struct) return result
@@ -47,8 +47,8 @@ function generateTs(schemaList: ParamItemSchema[], apiConfig: ApiListItem): Reco
     }
     // 是否为必填项
     const suffix = API_PARAM_REQUIRED.when(paramNotNull, 'required') ? '' : '?'
-    const paramKey = `"${schema.paramKey}"${suffix}`.replace(/\s/g, '')
-    return { ...result, [paramKey]: { type, content } }
+    const name = `"${paramKey}"${suffix}`
+    return { ...result, [name]: { type, content } }
   }, {})
 }
 
