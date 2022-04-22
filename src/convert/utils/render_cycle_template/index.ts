@@ -19,8 +19,8 @@ export default function renderCycleTemplate(template: MockTemplateType | [MockTe
     let isArrayType = TYPE.when(paramType, 'array')
     const struct = structMap.get(paramType)
     if (struct) isArrayType = struct.type === 'array'
-    const result = `generateTreeData(3, ${JSON.stringify(cycle_path)})`;
-    
+    const result = `generateTreeData(3, ${JSON.stringify(cycle_path)})`
+
     const target = parentTemplate[paramKey]
     // 删除目标 避免 cycleTemplate 获取时发生异常
     delete parentTemplate[paramKey]
@@ -28,13 +28,8 @@ export default function renderCycleTemplate(template: MockTemplateType | [MockTe
       mock_rule: target?.mock_rule,
       render_raw: true,
       // 生成对应的数据
-      mock_type: isArrayType ? `[${result}]` : result
+      mock_type: isArrayType ? `[${result}]` : result,
     }
   }
   return template
-}
-const a = {
-  name: { mock_type: '@cname()' },
-  value: { mock_type: '@integer(0, 6)' },
-  key: { mock_type: '@word()' },
 }
