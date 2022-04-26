@@ -3,13 +3,20 @@ import getMockTemplate from './get_mock_template'
 /**
  * @description 生成树形数据
  */
-export function generateTreeData($depth: number, parents: string[], paths: string[]) {
-  const depth = ~~(Math.random() * $depth) + 1
+export function generateTreeData(
+  $depth: number,
+  $templatePath: string[],
+  $fullPath: string[],
+  useRootTemplate = false // 是否使用根模板
+) {
+  const depth = ~~(Math.random() * $depth)
   return function (this: any, arg: MockContext) {
     const {
       context: { templateRoot },
     } = arg
-    const template = getMockTemplate(templateRoot, parents, paths, depth - 1)
+    const templatePath = useRootTemplate ? [] : $templatePath
+    const fullPath = $fullPath.slice($templatePath.length - $fullPath.length)
+    const template = getMockTemplate(depth, templateRoot, templatePath, fullPath)
     return mockjs.mock(template)
   }
 }

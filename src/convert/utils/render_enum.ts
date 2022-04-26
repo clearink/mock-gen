@@ -4,9 +4,9 @@ export function renderJoiEnum(enumList: any[] | string, type: string) {
   }
   // 单独处理 array 情况
   if (type === 'array') {
-    return ['array().', 'items(joi.valid(', enumList, '))']
+    return { content: ['array().', 'items(joi.valid(', enumList, '))'] }
   }
-  return [['valid(', enumList, ')']]
+  return { content: ['valid(', enumList, ')'] }
 }
 
 export function renderMockEnum(mockRule: CustomMockRule, type: string) {

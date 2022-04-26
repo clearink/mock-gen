@@ -62,6 +62,10 @@ function matchCustomRule(
           if (item.hasOwnProperty('ts_type') && (important || edit.ts_type)) {
             result.ts_type = item.ts_type
           }
+
+          if (item.hasOwnProperty('cycle_depth') && (important || edit.cycle_depth)) {
+            result.cycle_depth = item.cycle_depth
+          }
         } else if (reg.test(paramKey) && edit.mock_type) {
           result.mock_type = item
         }

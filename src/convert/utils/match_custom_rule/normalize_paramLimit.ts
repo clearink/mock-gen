@@ -19,13 +19,14 @@ export function normalizeParamLimit(
 ) {
   const result = normalizeSchemaLimit(paramLimit) as Required<CustomMockRule>
 
-  const { mock_args, mock_rule, mock_type, joi_type, ts_type } = result
+  const { mock_args, mock_rule, mock_type, joi_type, ts_type, cycle_depth } = result
   const edit = {
     mock_rule: !mock_rule, // 允许修改 rule
     mock_type: !mock_type, // 允许修改 content
     mock_args: !mock_args, // 允许修改 args
     joi_type: !joi_type, // 允许修改 joi 数据
     ts_type: !ts_type, // 允许修改 ts 类型
+    cycle_depth: !cycle_depth, // 允许修改树层级
   }
   let shouldMatch = false // 是否应该进行匹配
   if (!edit.mock_rule && !edit.mock_type && matchType === 'mock') {

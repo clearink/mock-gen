@@ -36,6 +36,7 @@ function generateMock(
   const structMap = getStructMap(true)
   return normalizeParam(schemaList).reduce((result, schema) => {
     const { paramKey, originalType: paramType } = schema
+
     if (schema.hasOwnProperty('structureID')) {
       const id = schema.structureID!
       const struct = structMap.get(id)?.struct
@@ -48,18 +49,17 @@ function generateMock(
     if (CycleCache.shouldCheck(paramType)) {
       // 为了拿到对应的 mock_rule 不得已多循环了一次
       // 所以要去除用于获取模板的数据
-      const cyclePath = parents.slice(0, -1)
-      const cache = { parents: cyclePath, paramType, paramKey, cycle_path: cyclePath }
+      const cycle_path = parents.slice(0, -1)
+      const cache = { parents: cycle_path, paramType, paramKey, cycle_path }
       CycleCache.set(fullPaths, cache)
       if (CycleCache.isCycle(parents, paramType)) return result
     }
-    const { mock_rule, mock_type, cycle_path } = schemaToMock(schema, apiConfig, fullPaths)
+    const mockMatch = schemaToMock(schema, apiConfig, fullPaths) as Required<CustomMockRule>
 
-    if (cycle_path) {
-      const cache = { paramType, parents, paramKey, cycle_path, mock_rule }
-      CycleCache.set(fullPaths, cache)
+    if (mockMatch.cycle_path) {
+      CycleCache.set(fullPaths, { paramType, parents, paramKey, ...mockMatch })
     } else CycleCache.delete(fullPaths) // 当前数据
-    return { ...result, [paramKey]: { mock_rule, mock_type, cycle_path } }
+    return { ...result, [paramKey]: mockMatch }
   }, {})
 }
 
@@ -69,7 +69,7 @@ function generateMock(
  * @param apiConfig api配置
  * @returns
  */
-function schemaToMock(schema: ParamItemSchema, apiConfig: ApiListItem, parentKeys: string[]) {
+function schemaToMock(schema: ParamItemSchema, apiConfig: ApiListItem, parents: string[]) {
   // 获取参数的类型字符串 同时处理自定义数据结构
   const type = normalizeParamType(schema)
 
@@ -120,15 +120,15 @@ function schemaToMock(schema: ParamItemSchema, apiConfig: ApiListItem, parentKey
     case 'json':
     case 'object':
       const childList = (schema.childList ?? []) as ParamItemSchema[]
-      const childContent = generateMock(childList, apiConfig, parentKeys)
+      const childContent = generateMock(childList, apiConfig, parents)
       const isEmpty = Object.keys(childContent).length === 0
       const isArray = type === 'array'
       content = isEmpty && isArray ? content : childContent
   }
-  const { mock_rule, mock_type, mock_args, cycle_path } = bindMatchRule({ mock_type: content })
-  const mockType = normalizeMockArgs(schema, mock_args, mock_type)
-  if (type === 'array') return { mock_rule, cycle_path, mock_type: [mockType] }
-  return { mock_rule, cycle_path, mock_type: mockType }
+  let { mock_args, mock_type, ...rest } = bindMatchRule({ mock_type: content })
+  mock_type = normalizeMockArgs(schema, mock_args, mock_type)
+  if (type === 'array') mock_type = [mock_type]
+  return { mock_type, ...rest }
 }
 
 export default convertToMock

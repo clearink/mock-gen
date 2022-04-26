@@ -1,4 +1,3 @@
-import { API_PARAM_REQUIRED } from '../../constant'
 import getStructMap from '../../utils/get_struct_map'
 import {
   renderTsEnum,
@@ -6,6 +5,7 @@ import {
   judgeGenerateEnum,
   normalizeParam,
   normalizeParamType,
+  CycleCache,
 } from '../utils'
 import { normalizeTsData } from './normalize_ts_data'
 
@@ -16,8 +16,11 @@ import { normalizeTsData } from './normalize_ts_data'
  */
 function convertToTs(apiConfig: ApiListItem) {
   const { requestInfo, urlParam, resultInfo } = apiConfig
+  CycleCache.clear() // 清空 cache
   const body = generateTs(requestInfo, apiConfig) // body 参数
+  CycleCache.clear() // 清空 cache
   const query = generateTs(urlParam, apiConfig) // query 参数
+  CycleCache.clear() // 清空 cache
   const response = generateTs(resultInfo, apiConfig) // 响应数据
   return {
     body: normalizeTsData('BodyParam', body),
@@ -32,23 +35,39 @@ function convertToTs(apiConfig: ApiListItem) {
  * @param apiConfig api 配置
  * @returns
  */
-function generateTs(schemaList: ParamItemSchema[], apiConfig: ApiListItem): Record<string, any> {
+function generateTs(
+  schemaList: ParamItemSchema[],
+  apiConfig: ApiListItem,
+  parents: string[] = []
+): Record<string, any> {
   const structMap = getStructMap(true)
   return normalizeParam(schemaList).reduce((result, schema) => {
-    const { structureID, paramNotNull, paramKey } = schema
+    const { paramNotNull, paramKey, originalType: paramType } = schema
     if (schema.hasOwnProperty('structureID')) {
-      const struct = structMap.get(structureID!)?.struct
+      const id = schema.structureID!
+      const struct = structMap.get(id)?.struct
       if (!struct) return result
-      return { ...result, ...generateTs(struct, apiConfig) }
+      return { ...result, ...generateTs(struct, apiConfig, parents) }
     }
-    const { type, content } = schemaToTs(schema, apiConfig) ?? {
-      type: 'any',
-      content: 'any',
+
+    const fullPaths = parents.concat(paramKey)
+
+    if (CycleCache.shouldCheck(paramType)) {
+      // 为了拿到对应的 mock_rule 不得已多循环了一次
+      // 所以要去除用于获取模板的数据
+      const cycle_path = parents.slice(0, -1)
+      const cache = { parents: cycle_path, paramType, paramKey, cycle_path }
+      CycleCache.set(fullPaths, cache)
+      if (CycleCache.isCycle(parents, paramType)) return result
     }
+
+    const { type, content, cycle_path } = schemaToTs(schema, apiConfig, fullPaths)
+
+    if (cycle_path) {
+    } else CycleCache.delete(fullPaths) // 当前数据
     // 是否为必填项
-    const suffix = API_PARAM_REQUIRED.when(paramNotNull, 'required') ? '' : '?'
-    const name = `"${paramKey}"${suffix}`
-    return { ...result, [name]: { type, content } }
+
+    return { ...result, [paramKey]: { type, content, paramNotNull } }
   }, {})
 }
 
@@ -58,7 +77,11 @@ function generateTs(schemaList: ParamItemSchema[], apiConfig: ApiListItem): Reco
  * @param apiConfig api 配置
  * @returns
  */
-function schemaToTs(schema: ParamItemSchema, apiConfig: ApiListItem) {
+function schemaToTs(
+  schema: ParamItemSchema,
+  apiConfig: ApiListItem,
+  parents: string[]
+): { content: string[]; cycle_path?: string[] } {
   // 获取参数的类型字符串 同时处理自定义数据结构
   const type = normalizeParamType(schema)
 
@@ -68,17 +91,16 @@ function schemaToTs(schema: ParamItemSchema, apiConfig: ApiListItem) {
   const shouldGenerate = judgeGenerateEnum(schema, bindMatchRule)
   if (shouldGenerate) return renderTsEnum(shouldGenerate.ts_type, type)
 
-  let ts: any = 'any'
+  let content: any = 'any'
   switch (type) {
     case 'string':
     case 'char':
     case 'date':
     case 'datetime':
-      ts = 'string'
+      content = 'string'
       break
     case 'file':
       // 暂时不知道是啥玩意儿
-      ts = 'any'
       break
     case 'int':
     case 'float':
@@ -87,24 +109,26 @@ function schemaToTs(schema: ParamItemSchema, apiConfig: ApiListItem) {
     case 'byte':
     case 'short':
     case 'long':
-      ts = 'number'
+      content = 'number'
       break
     case 'boolean':
-      ts = 'boolean'
+      content = 'boolean'
       break
     case 'null':
-      ts = 'null'
+      content = 'null'
       break
     case 'array':
     case 'json':
     case 'object':
       const { childList = [] } = schema
-      const defaultTs = type === 'array' ? 'any[]' : 'Record<string, any>'
-      const items = generateTs(childList as ParamItemSchema[], apiConfig)
+      const fallback = type === 'array' ? 'any[]' : 'Record<string, any>'
+      const items = generateTs(childList as ParamItemSchema[], apiConfig, parents)
       const isEmpty = Object.keys(items).length === 0
-      ts = isEmpty ? defaultTs : items
+      content = isEmpty ? fallback : items
   }
-  return { content: bindMatchRule({ ts_type: ts }).ts_type, type }
+  const { cycle_path } = bindMatchRule({ ts_type: content })
+
+  return { content, type, cycle_path }
 }
 
 export default convertToTs

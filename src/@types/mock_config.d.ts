@@ -37,4 +37,5 @@ interface CustomMockRule extends Partial<ConfigSchemaItem> {
 
   // 树形结构数据
   cycle_path?: string[]
+  cycle_depth?: any
 }

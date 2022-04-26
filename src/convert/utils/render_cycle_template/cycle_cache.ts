@@ -7,7 +7,7 @@ import {
  * @description 记录循环依赖的结构体或自定义的树形数据
  */
 type CacheKey = string | number
-export interface CacheValue {
+export interface CacheValue extends CustomMockRule {
   paramType: CacheKey // 当前字段的类型
   paramKey: string // 字段名称
   parents: string[] // 父级路径
