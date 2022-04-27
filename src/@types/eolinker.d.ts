@@ -9,7 +9,7 @@ interface ParamItemSchema {
   paramType: string | number // 被修正过
   originalType: string // 原始的类型
   paramKey: string
-  structureID?: number
+  structureID?: number | string
   paramLimit?: string
   paramValueList?: ParamValueEnum[]
   childList?: ParamValueEnum[]

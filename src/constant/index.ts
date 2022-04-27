@@ -27,8 +27,8 @@ export const API_REQUEST_TYPE = new Constant([
 
 /** @description 请求参数是否为必填 */
 export const API_PARAM_REQUIRED = new Constant([
-  { label: '必填', value: '0', key: 'required' },
-  { label: '可选', value: '1', key: 'option' },
+  { label: '必填', value: 0, key: 'required' },
+  { label: '可选', value: 1, key: 'option' },
 ] as const)
 
 /** @description 数据结构类型 */

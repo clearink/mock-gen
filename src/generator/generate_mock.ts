@@ -32,7 +32,7 @@ async function handleWriteFile(
   const arrayRoot = RESULT_PARAM_JSON_TYPE.when(responseType, 'array')
   // 组装数据                           // 模板路径
   const fileData = await renderFile(mockConfig.templatePath, {
-    method: API_REQUEST_TYPE.findByValue(baseInfo.apiRequestType)?.key,
+    method: API_REQUEST_TYPE.findByValue(+baseInfo.apiRequestType, 'get')!.key,
     mock_data: mockData,
     joi_body: joiData.bodyParams,
     joi_query: joiData.queryParams,

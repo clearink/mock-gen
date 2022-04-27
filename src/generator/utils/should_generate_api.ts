@@ -14,7 +14,7 @@ export default function shouldGenerateApi(
     judgeInclude(apiName, excludeApi, false) || judgeInclude(apiURI, excludeApi, false) // 被排除的 api
   const shouldUpdate = judgeInclude(apiName, includeApi) || judgeInclude(apiURI, includeApi) // 需要更新的 api
 
-  const apiStatusLabel = API_STATUS.findByValue(+apiStatus)!.label
+  const apiStatusLabel = API_STATUS.findByValue(+apiStatus, 'publish')!.label
   const shouldUpdateStatus = judgeInclude(apiStatusLabel, includeStatus) // 需要更新的 api 状态
 
   return !shouldExclude && shouldUpdate && shouldUpdateStatus

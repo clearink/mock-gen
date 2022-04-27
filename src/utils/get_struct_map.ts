@@ -11,8 +11,8 @@ export default function getStructMap(useCache = false, jsonData?: EolinkerDataSc
   for (const $struct of structList) {
     if (!$struct.structureID) continue
     // 忽略类型 统一转换成字符串
-    const id = `${$struct.structureID}`
-    let type = `${$struct.structureType}`
+    const id = `${$struct.structureID ?? ''}`
+    let type = `${$struct.structureType ?? ''}`
     type = STRUCTURE_TYPE.findByValue(type, 'object')!.key
     const struct = JSON.parse($struct.structureData as any)
     map.set(id, { struct, type })

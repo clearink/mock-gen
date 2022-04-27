@@ -29,7 +29,7 @@ async function handleWriteFile(
 
   // 组装数据                           // 模板路径
   const fileData = await renderFile(tsConfig.templatePath, {
-    method: API_REQUEST_TYPE.findByValue(baseInfo.apiRequestType)?.key,
+    method: API_REQUEST_TYPE.findByValue(+baseInfo.apiRequestType, 'get')!.key,
     rootName: normalizeRootName(baseInfo),
     body: data.body || {},
     query: data.query || {},

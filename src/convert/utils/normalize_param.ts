@@ -10,8 +10,10 @@ const normalizeFilter = (item: ParamItemSchema) =>
  */
 export default function normalizeParam(schemaList: ParamItemSchema[] = []) {
   for (let $schema of schemaList) {
-    $schema.paramType = `${$schema.paramType}` // 转成 string
-    $schema.originalType = $schema.originalType ?? $schema.paramType // 保存原有的 type 类型
+    $schema.structureID = `${$schema.structureID ?? ''}` // 转成 string
+    $schema.paramType = `${$schema.paramType ?? ''}` // 转成 string
+    // 保存原有的 type 类型 用于判断是否出现循环
+    $schema.originalType = $schema.originalType ?? $schema.paramType
     if (normalizeFilter($schema)) continue
     // 需要修正
     const attrList = $schema.paramKey.split(DIRTY_SEPARATOR)

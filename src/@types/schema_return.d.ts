@@ -22,5 +22,6 @@ interface SchemaToJoiReturn {
 interface SchemaToTsReturn {
   content: string
   cycle_path?: string[]
-  type: string
+  isArrayType: boolean
+  parents: string[]
 }

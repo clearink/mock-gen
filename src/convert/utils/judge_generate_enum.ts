@@ -1,5 +1,4 @@
 import generateEnum from './generate_enum'
-import matchCustomRule from './match_custom_rule'
 import { API_REQUEST_PARAM_TYPE as TYPE } from '../../constant'
 
 const typeList = ['enum', 'json', 'object', 'array'] // 这几种才能生成枚举值
@@ -20,7 +19,8 @@ export default function judgeGenerateEnum(
   const { paramType, paramValueList = [], childList = [] } = schema
 
   const list = TYPE.when(paramType, 'enum') ? childList : paramValueList
-  const shouldGenerate = list.length > 0 || TYPE.when(paramType, typeList)
+  const needGenerateEnum = TYPE.when(paramType, ['enum', 'json', 'object', 'array'])
+  const shouldGenerate = list.length > 0 || needGenerateEnum
 
   const enumList = generateEnum(list, shouldGenerate)
 

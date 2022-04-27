@@ -2,10 +2,7 @@ import CycleCache from './cycle_cache'
 import logger from '../../../utils/logger'
 import getCycleTemplate from './get_cycle_template'
 import getStructMap from '../../../utils/get_struct_map'
-import {
-  RULE_CACHE_SEPARATOR as SEPARATOR,
-  API_REQUEST_PARAM_TYPE as TYPE,
-} from '../../../constant'
+import { RULE_CACHE_SEPARATOR as SEPARATOR } from '../../../constant'
 import { isArray } from '../../../utils/validate_type'
 
 export default function renderCycleTemplate(template: MockTemplateType | [MockTemplateType]) {

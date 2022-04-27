@@ -73,9 +73,9 @@ function generateJoi(
 
     if (content.length <= 0) return result // 为空直接返回
     // hack 如果为 string 类型 默认允许空串
-    if (TYPE.when(paramType, 'string')) content.push(".allow('')")
+    if (TYPE.when(schema.paramType, 'string')) content.push(".allow('')")
     // 是否为必填项
-    const required = API_PARAM_REQUIRED.when(paramNotNull, 'required')
+    const required = API_PARAM_REQUIRED.when(+paramNotNull, 'required')
 
     if (required && (!cycle_path || !cycle_path.length)) content.push('.required()')
 

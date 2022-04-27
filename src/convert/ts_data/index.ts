@@ -43,12 +43,9 @@ function generateTs(
   const structMap = getStructMap(true)
   return normalizeParam(schemaList).reduce((result, schema) => {
     const { paramNotNull, paramKey, originalType: paramType } = schema
-    if (schema.hasOwnProperty('structureID')) {
-      const id = schema.structureID!
-      const struct = structMap.get(id)?.struct
-      if (!struct) return result
-      return { ...result, ...generateTs(struct, apiConfig, parents) }
-    }
+    // 自定义数据结构
+    const struct = structMap.get(schema.structureID!)?.struct
+    if (struct) return { ...result, ...generateTs(struct, apiConfig, parents) }
 
     const paths = parents.concat(paramKey)
 
@@ -57,12 +54,11 @@ function generateTs(
       if (CycleCache.isCycle(paths, paramType)) return result
     }
 
-    const { type, content, cycle_path } = schemaToTs(schema, apiConfig, paths)
+    const { isArrayType, content, cycle_path } = schemaToTs(schema, apiConfig, paths)
 
-    if (cycle_path) {
-    } else CycleCache.delete(paths) // 当前数据
+    CycleCache.delete(paths) // 当前数据
 
-    return { ...result, [paramKey]: { type, content, paramNotNull } }
+    return { ...result, [paramKey]: { isArrayType, content, paramNotNull, parents, cycle_path } }
   }, {})
 }
 
@@ -76,7 +72,7 @@ function schemaToTs(
   schema: ParamItemSchema,
   apiConfig: ApiListItem,
   parents: string[]
-): SchemaToTsReturn {
+): Omit<SchemaToTsReturn, 'parents'> {
   // 获取参数的类型字符串 同时处理自定义数据结构
   const type = normalizeParamType(schema)
 
@@ -84,8 +80,8 @@ function schemaToTs(
   const bindMatchRule = matchCustomRule('ts', schema, apiConfig)
   // 获取枚举值
   const shouldGenerate = judgeGenerateEnum(schema, bindMatchRule)
-  if (shouldGenerate) return renderTsEnum(shouldGenerate.ts_type, type)
-
+  const isArrayType = type === 'array'
+  if (shouldGenerate) return renderTsEnum(shouldGenerate.ts_type, isArrayType)
   let content: any = 'any'
   switch (type) {
     case 'string':
@@ -116,14 +112,14 @@ function schemaToTs(
     case 'json':
     case 'object':
       const { childList = [] } = schema
-      const fallback = type === 'array' ? 'any[]' : 'Record<string, any>'
+      const fallback = isArrayType ? 'any[]' : 'Record<string, any>'
       const items = generateTs(childList as ParamItemSchema[], apiConfig, parents)
       const isEmpty = Object.keys(items).length === 0
       content = isEmpty ? fallback : items
   }
   const { cycle_path } = bindMatchRule({ ts_type: content })
 
-  return { content, type, cycle_path }
+  return { content, isArrayType, cycle_path }
 }
 
 export default convertToTs

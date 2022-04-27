@@ -11,20 +11,18 @@ export default function normalizeParamType(schema: ParamItemSchema): string {
   const { paramType, childList = [] } = schema
 
   // 如果自定义结构体中有该类型 直接返回
-  if (structMap.has(paramType)) {
-    const { type, struct } = structMap.get(paramType)!
-    schema.childList = struct
+  const structCache = structMap.get(paramType)
+  if (structCache) {
+    schema.childList = structCache.struct
     // array => array
     // formData, json, xml, object => object
     // enum => enum
-    schema.paramType = TYPE.findByKey(type, 'object')!.value
-    return TYPE.findByValue(schema.paramType)?.key as string
+    schema.paramType = TYPE.findByKey(structCache.type, 'object')!.value
+    return TYPE.findByValue(schema.paramType, 'object')!.key
   }
 
   // 如果 有子元素 且类型不是 json,object,array 默认修正为 object
-  const complexType = ['json', 'object', 'array']
-  if (childList.length > 0 && !TYPE.when(paramType, complexType)) {
-    return TYPE.findByKey('object')!.key
-  }
-  return TYPE.findByValue(paramType)?.key as string
+  const needNormalize = !TYPE.when(paramType, ['json', 'object', 'array'])
+  if (childList.length > 0 && needNormalize) return TYPE.findByKey('object')!.key
+  return TYPE.findByValue(paramType, 'string')!.key
 }

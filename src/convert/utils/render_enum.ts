@@ -14,14 +14,14 @@ export function renderMockEnum(rule: CustomMockRule): SchemaToMockReturn {
   const enumList = JSON.stringify(rule.mock_type)
   return { rule: rule.mock_rule, content: enumList, render_raw: true }
 }
-export function renderTsEnum(enumList: any[] | string, type: string) {
+export function renderTsEnum(enumList: any[] | string, isArrayType: boolean) {
   if (Array.isArray(enumList)) {
     enumList = JSON.stringify(enumList)
       .replace(/(^\[)|(\]$)/g, '')
       .replace(/\,/g, ' | ')
   }
-  if (type === 'array') {
-    return { type: 'enum', content: `(${enumList})[]` }
+  if (isArrayType) {
+    return { type: 'enum', content: `(${enumList})[]`, isArrayType }
   }
-  return { type: 'enum', content: enumList }
+  return { type: 'enum', content: enumList, isArrayType }
 }

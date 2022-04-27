@@ -6,7 +6,7 @@ import logger from '../../utils/logger'
  * @param {any} source 源数据
  */
 export default function normalizeFileData(source: string, filepath: string) {
-  const config = { tabWidth: 4, filepath }
+  const config = { tabWidth: 4, filepath, quoteProps: 'preserve' as const }
   try {
     return prettier.format(source, config)
   } catch (error) {

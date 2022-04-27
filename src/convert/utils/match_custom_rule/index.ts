@@ -21,8 +21,8 @@ function matchCustomRule(
   return (initState: CustomMockRule) => {
     const { paramKey, paramType, paramLimit } = schema
 
-    // 当前字段的 keyString
-    const propType = TYPE.findByValue(paramType)?.key as string
+    // 当前字段的类型
+    const propType = TYPE.findByValue(paramType, 'string')!.key
 
     // 自定义 mock 规则
     const { result, edit, shouldMatch } = normalizeParamLimit(matchType, initState, paramLimit)

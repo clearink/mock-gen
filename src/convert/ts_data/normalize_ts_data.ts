@@ -1,4 +1,5 @@
 import { normalizeTypeName } from '../../utils/normalize_prop_name'
+import { isObject } from '../../utils/validate_type'
 
 /**
  * @description 压缩字段名
@@ -42,19 +43,20 @@ function compressName(parentName: string, name: string, maxLen: number) {
  */
 export function normalizeTsData(
   parentName: string,
-  data: Record<string, { type: string; content: any }> = {}
+  data: Record<string, SchemaToTsReturn> = {}
 ): Record<string, any> {
   return Object.entries(data).reduce((result, [name, config]) => {
-    const { type, content } = config
-    if (content === null || typeof content !== 'object') {
-      result[parentName] = { ...result[parentName], [name]: content }
-      return { ...result }
-    }
+    const { isArrayType, content, parents, cycle_path } = config
     // 如果是对象则需要计算出对应的 typeName
     // 最长不超过 24 个字符
     const optimized = compressName(parentName, name.replace(/\?|"/g, ''), 24)
-    const suffix = type === 'array' ? '[]' : ''
-    const typeName = `${optimized}${suffix}`
+
+    if (content === null || !isObject(content)) {
+      result[parentName] = { ...result[parentName], [name]: content }
+      return { ...result }
+    }
+
+    const typeName = `${optimized}${isArrayType ? '[]' : ''}`
 
     result[parentName] = { ...result[parentName], [name]: typeName }
     return { ...result, ...normalizeTsData(optimized, content) }

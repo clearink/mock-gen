@@ -29,7 +29,7 @@ export default function generateEnum(array: ParamValueEnum[], shouldGenerate = t
       return pre
     }
 
-    const type = TYPE.findByValue(paramType, 'string')?.key
+    const type = TYPE.findByValue(paramType, 'string')!.key
     switch (type) {
       case 'string':
       case 'char':

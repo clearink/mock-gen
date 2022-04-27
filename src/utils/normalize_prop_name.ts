@@ -19,7 +19,7 @@ export function normalizeTypeName(name: string) {
  */
 export function normalizeRootName(baseInfo: ApiListItem['baseInfo']) {
   const { apiURI, apiRequestType } = baseInfo
-  const method = API_REQUEST_TYPE.findByValue(apiRequestType)?.key
+  const method = API_REQUEST_TYPE.findByValue(+apiRequestType, 'get')!.key
   const lastSlash = apiURI.replace(/(.*)\//g, '').replace(/[\{\}\[\]]/g, '')
   return normalizeTypeName(`${method}_${lastSlash}`).join('')
 }

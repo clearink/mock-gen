@@ -6,9 +6,9 @@ export default function normalizeMockArgs(
   mockType: any
 ) {
   const { paramType, minValue, maxValue, minLength, maxLength } = schema
-  const pt = TYPE.findByValue(paramType)?.key
+  const type = TYPE.findByValue(paramType, 'string')!.key
   let result = mockArgs
-  switch (pt) {
+  switch (type) {
     case 'string':
     case 'char':
     case 'boolean':
