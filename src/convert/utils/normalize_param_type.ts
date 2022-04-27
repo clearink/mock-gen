@@ -6,7 +6,7 @@ import getStructMap from '../../utils/get_struct_map'
  * @param {string} paramType
  * @returns
  */
-export default function normalizeParamType(schema: ParamItemSchema) {
+export default function normalizeParamType(schema: ParamItemSchema): string {
   const structMap = getStructMap(true)
   const { paramType, childList = [] } = schema
 
@@ -18,7 +18,7 @@ export default function normalizeParamType(schema: ParamItemSchema) {
     // formData, json, xml, object => object
     // enum => enum
     schema.paramType = TYPE.findByKey(type, 'object')!.value
-    return TYPE.findByValue(schema.paramType)!.key
+    return TYPE.findByValue(schema.paramType)?.key as string
   }
 
   // 如果 有子元素 且类型不是 json,object,array 默认修正为 object
@@ -26,5 +26,5 @@ export default function normalizeParamType(schema: ParamItemSchema) {
   if (childList.length > 0 && !TYPE.when(paramType, complexType)) {
     return TYPE.findByKey('object')!.key
   }
-  return TYPE.findByValue(paramType)!.key
+  return TYPE.findByValue(paramType)?.key as string
 }

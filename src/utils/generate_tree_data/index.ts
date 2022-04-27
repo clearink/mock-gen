@@ -9,7 +9,7 @@ export function generateTreeData(
   $fullPath: string[],
   useRootTemplate = false // 是否使用根模板
 ) {
-  const depth = ~~(Math.random() * $depth)
+  const depth = Math.round(Math.random() * $depth)
   return function (this: any, arg: MockContext) {
     const {
       context: { templateRoot },

@@ -1,6 +1,5 @@
 import { API_REQUEST_PARAM_TYPE as TYPE, API_PARAM_REQUIRED } from '../../constant'
 import getStructMap from '../../utils/get_struct_map'
-import { isArray } from '../../utils/validate_type'
 
 import {
   CycleCache,
@@ -54,35 +53,33 @@ function generateJoi(
   return normalizeParam(schemaList).reduce((result, schema) => {
     const { paramNotNull, originalType: paramType, paramKey } = schema
 
-    if (schema.hasOwnProperty('structureID')) {
-      const id = schema.structureID!
-      const struct = structMap.get(id)?.struct
-      if (!struct) return result
-      return { ...result, ...generateJoi(struct, apiConfig, parents) }
-    }
+    // 自定义数据结构
+    const struct = structMap.get(schema.structureID!)?.struct
+    if (struct) return { ...result, ...generateJoi(struct, apiConfig, parents) }
 
-    const fullPaths = parents.concat(paramKey)
+    const paths = parents.concat(paramKey) // 新的父级路径
+
     if (CycleCache.shouldCheck(paramType)) {
-      const cycle_path = parents.slice(0, -1)
-      const cache = { parents: cycle_path, paramType, paramKey, cycle_path }
-      CycleCache.set(fullPaths, cache)
-      if (CycleCache.isCycle(fullPaths, paramType)) {
-        return { ...result, [paramKey]: [`joi.link("/${parents.join('.')}")`] }
+      CycleCache.set(paths, { paramType, cycle_path: parents.slice(0, -1) })
+      if (CycleCache.isCycle(paths, paramType)) {
+        const joiData = [`joi.link("/${parents.join('.')}")`]
+        return { ...result, [paramKey]: joiData }
       }
     }
 
-    const { content, cycle_path } = schemaToJoi(schema, apiConfig, fullPaths)
+    const { content, cycle_path } = schemaToJoi(schema, apiConfig, paths)
 
-    CycleCache.delete(fullPaths) // 当前数据
-
-    if (cycle_path) return { ...result, [paramKey]: [`joi.link("/${cycle_path.join('.')}")`] }
+    CycleCache.delete(paths) // 当前数据
 
     if (content.length <= 0) return result // 为空直接返回
     // hack 如果为 string 类型 默认允许空串
     if (TYPE.when(paramType, 'string')) content.push(".allow('')")
     // 是否为必填项
-    if (API_PARAM_REQUIRED.when(paramNotNull, 'required')) content.push('.required()')
-    return { ...result, [paramKey]: ['joi.'].concat(content as string[]) }
+    const required = API_PARAM_REQUIRED.when(paramNotNull, 'required')
+
+    if (required && (!cycle_path || !cycle_path.length)) content.push('.required()')
+
+    return { ...result, [paramKey]: ['joi.'].concat(content) }
   }, {})
 }
 
@@ -96,7 +93,7 @@ function schemaToJoi(
   schema: ParamItemSchema,
   apiConfig: ApiListItem,
   parents: string[] = []
-): { content: string[]; cycle_path?: string[] } {
+): SchemaToJoiReturn {
   // 获取参数的类型字符串 同时处理自定义数据结构
   const type = normalizeParamType(schema)
 

@@ -39,7 +39,7 @@ function generateTs(
   schemaList: ParamItemSchema[],
   apiConfig: ApiListItem,
   parents: string[] = []
-): Record<string, any> {
+): Record<string, SchemaToTsReturn> {
   const structMap = getStructMap(true)
   return normalizeParam(schemaList).reduce((result, schema) => {
     const { paramNotNull, paramKey, originalType: paramType } = schema
@@ -50,22 +50,17 @@ function generateTs(
       return { ...result, ...generateTs(struct, apiConfig, parents) }
     }
 
-    const fullPaths = parents.concat(paramKey)
+    const paths = parents.concat(paramKey)
 
     if (CycleCache.shouldCheck(paramType)) {
-      // 为了拿到对应的 mock_rule 不得已多循环了一次
-      // 所以要去除用于获取模板的数据
-      const cycle_path = parents.slice(0, -1)
-      const cache = { parents: cycle_path, paramType, paramKey, cycle_path }
-      CycleCache.set(fullPaths, cache)
-      if (CycleCache.isCycle(parents, paramType)) return result
+      CycleCache.set(paths, { paramType, cycle_path: parents.slice(0, -1) })
+      if (CycleCache.isCycle(paths, paramType)) return result
     }
 
-    const { type, content, cycle_path } = schemaToTs(schema, apiConfig, fullPaths)
+    const { type, content, cycle_path } = schemaToTs(schema, apiConfig, paths)
 
     if (cycle_path) {
-    } else CycleCache.delete(fullPaths) // 当前数据
-    // 是否为必填项
+    } else CycleCache.delete(paths) // 当前数据
 
     return { ...result, [paramKey]: { type, content, paramNotNull } }
   }, {})
@@ -81,7 +76,7 @@ function schemaToTs(
   schema: ParamItemSchema,
   apiConfig: ApiListItem,
   parents: string[]
-): { content: string[]; cycle_path?: string[] } {
+): SchemaToTsReturn {
   // 获取参数的类型字符串 同时处理自定义数据结构
   const type = normalizeParamType(schema)
 

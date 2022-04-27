@@ -10,6 +10,7 @@ const normalizeFilter = (item: ParamItemSchema) =>
  */
 export default function normalizeParam(schemaList: ParamItemSchema[] = []) {
   for (let $schema of schemaList) {
+    $schema.paramType = `${$schema.paramType}` // 转成 string
     $schema.originalType = $schema.originalType ?? $schema.paramType // 保存原有的 type 类型
     if (normalizeFilter($schema)) continue
     // 需要修正

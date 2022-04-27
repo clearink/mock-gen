@@ -22,7 +22,7 @@ function matchCustomRule(
     const { paramKey, paramType, paramLimit } = schema
 
     // 当前字段的 keyString
-    const propType = TYPE.findByValue(paramType)!.key
+    const propType = TYPE.findByValue(paramType)?.key as string
 
     // 自定义 mock 规则
     const { result, edit, shouldMatch } = normalizeParamLimit(matchType, initState, paramLimit)

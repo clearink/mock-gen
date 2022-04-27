@@ -1,11 +1,11 @@
-import { isString, isArray } from '../../utils/validate_type'
+import { isString, isArray, isObject } from '../../utils/validate_type'
 
 export default function normalizeMockData(
   template: MockTemplateType | MockTemplateType[],
   raw?: true // 渲染原始数据
 ): string {
   // hack 修复 normalize 时失效
-  if (isString(template)) return raw ? template : `"${template}"`
+  if (!isObject(template)) return raw ? template : `"${template}"`
 
   const initialValue = isArray(template) ? '' : {}
   const $template: [string, MockTemplateValue | MockTemplateType][] = Object.entries(template) // [string, ][]
@@ -13,11 +13,11 @@ export default function normalizeMockData(
     // 数组的情况一定要转成字符串
     if (isString(result)) return result + normalizeMockData(value as MockTemplateType, raw)
 
-    const { mock_rule, mock_type, render_raw } = value as MockTemplateValue
-    const suffix = mock_rule ? `|${mock_rule}` : ''
+    const { rule, content, render_raw } = value as MockTemplateValue
+    const suffix = rule ? `|${rule}` : ''
     const prop = `${key}${suffix}`
 
-    return { ...result, [prop]: normalizeMockData(mock_type, render_raw) }
+    return { ...result, [prop]: normalizeMockData(content, render_raw) }
   }, initialValue)
 
   // 数组字符串

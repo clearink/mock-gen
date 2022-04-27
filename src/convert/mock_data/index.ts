@@ -32,34 +32,28 @@ function generateMock(
   schemaList: ParamItemSchema[],
   apiConfig: ApiListItem,
   parents: string[] = []
-): Record<string, any> {
+): Record<string, SchemaToMockReturn> {
   const structMap = getStructMap(true)
   return normalizeParam(schemaList).reduce((result, schema) => {
     const { paramKey, originalType: paramType } = schema
 
-    if (schema.hasOwnProperty('structureID')) {
-      const id = schema.structureID!
-      const struct = structMap.get(id)?.struct
-      if (!struct) return result
-      return { ...result, ...generateMock(struct, apiConfig, parents) }
-    }
+    // 自定义数据结构
+    const struct = structMap.get(schema.structureID!)?.struct
+    if (struct) return { ...result, ...generateMock(struct, apiConfig, parents) }
 
-    const fullPaths = parents.concat(paramKey)
+    const paths = parents.concat(paramKey) // 新的父级路径
 
     if (CycleCache.shouldCheck(paramType)) {
-      // 为了拿到对应的 mock_rule 不得已多循环了一次
-      // 所以要去除用于获取模板的数据
-      const cycle_path = parents.slice(0, -1)
-      const cache = { parents: cycle_path, paramType, paramKey, cycle_path }
-      CycleCache.set(fullPaths, cache)
+      // 为了拿到循环数据结构的 mock_rule 不得已多循环了一次 所以 cycle_path 要去除一层
+      CycleCache.set(paths, { paramType, cycle_path: parents.slice(0, -1) })
       if (CycleCache.isCycle(parents, paramType)) return result
     }
-    const mockMatch = schemaToMock(schema, apiConfig, fullPaths) as Required<CustomMockRule>
+    const { cycle_path, cycle_depth, ...rest } = schemaToMock(schema, apiConfig, paths)
 
-    if (mockMatch.cycle_path) {
-      CycleCache.set(fullPaths, { paramType, parents, paramKey, ...mockMatch })
-    } else CycleCache.delete(fullPaths) // 当前数据
-    return { ...result, [paramKey]: mockMatch }
+    if (cycle_path) CycleCache.set(paths, { paramType, cycle_path })
+    else CycleCache.delete(paths) // 当前数据
+
+    return { ...result, [paramKey]: { cycle_depth, ...rest } }
   }, {})
 }
 
@@ -69,7 +63,11 @@ function generateMock(
  * @param apiConfig api配置
  * @returns
  */
-function schemaToMock(schema: ParamItemSchema, apiConfig: ApiListItem, parents: string[]) {
+function schemaToMock(
+  schema: ParamItemSchema,
+  apiConfig: ApiListItem,
+  parents: string[]
+): SchemaToMockReturn {
   // 获取参数的类型字符串 同时处理自定义数据结构
   const type = normalizeParamType(schema)
 
@@ -78,7 +76,7 @@ function schemaToMock(schema: ParamItemSchema, apiConfig: ApiListItem, parents: 
   // 获取枚举值
   const shouldGenerate = judgeGenerateEnum(schema, bindMatchRule)
 
-  if (shouldGenerate) return renderMockEnum(shouldGenerate, type)
+  if (shouldGenerate) return renderMockEnum(shouldGenerate)
 
   let content: any = `@word(${REPLACE_FLAG})`
 
@@ -125,10 +123,15 @@ function schemaToMock(schema: ParamItemSchema, apiConfig: ApiListItem, parents: 
       const isArray = type === 'array'
       content = isEmpty && isArray ? content : childContent
   }
-  let { mock_args, mock_type, ...rest } = bindMatchRule({ mock_type: content })
-  mock_type = normalizeMockArgs(schema, mock_args, mock_type)
-  if (type === 'array') mock_type = [mock_type]
-  return { mock_type, ...rest }
+  const {
+    mock_rule: rule,
+    mock_type,
+    mock_args,
+    cycle_path,
+    cycle_depth,
+  } = bindMatchRule({ mock_type: content })
+  content = normalizeMockArgs(schema, mock_args, mock_type)
+  return { content: type === 'array' ? [content] : content, rule, cycle_path, cycle_depth }
 }
 
 export default convertToMock

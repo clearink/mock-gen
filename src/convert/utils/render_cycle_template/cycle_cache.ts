@@ -7,18 +7,18 @@ import {
  * @description 记录循环依赖的结构体或自定义的树形数据
  */
 type CacheKey = string | number
-export interface CacheValue extends CustomMockRule {
-  paramType: CacheKey // 当前字段的类型
-  paramKey: string // 字段名称
-  parents: string[] // 父级路径
+interface CacheValue {
+  paramType: CacheKey // 当前字段的类型 用于检测是否出现循环
   cycle_path: string[] // 树形结构路径
-  mock_rule?: string // mock 规则
 }
 class CycleCache {
   private cache: Map<string, CacheValue> = new Map()
 
   public get values() {
     return Array.from(this.cache.values())
+  }
+  public get entries() {
+    return Array.from(this.cache.entries())
   }
 
   public has(keys: CacheKey[]) {

@@ -32,17 +32,3 @@ export default function judgeGenerateEnum(
     ts_type: enumList,
   })
 }
-
-/**
- * "paramValueList": [
-        {
-          "value": "1",
-          "valueDescription": "",
-          "paramType": "0",
-          "radio": true
-        },
-        { "value": "2", "valueDescription": "", "paramType": "0" },
-        { "value": "true", "valueDescription": "", "paramType": "8" },
-        { "value": "false", "valueDescription": "", "paramType": "8" }
-      ]
- */
