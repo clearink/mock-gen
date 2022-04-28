@@ -50,14 +50,16 @@ function generateTs(
     const paths = parents.concat(paramKey)
 
     if (CycleCache.shouldCheck(paramType)) {
-      CycleCache.set(paths, { paramType, cycle_path: parents.slice(0, -1) })
-      if (CycleCache.isCycle(paths, paramType)) return result
+      const cycle_path = parents.slice()
+      CycleCache.set(paths, { paramType, cycle_path })
+      if (CycleCache.isCycle(paths, paramType)) {
+        return { ...result, [paramKey]: { content: 'any', paramNotNull, parents, cycle_path } }
+      }
     }
 
     const { isArrayType, content, cycle_path } = schemaToTs(schema, apiConfig, paths)
 
     CycleCache.delete(paths) // 当前数据
-
     return { ...result, [paramKey]: { isArrayType, content, paramNotNull, parents, cycle_path } }
   }, {})
 }
@@ -72,7 +74,7 @@ function schemaToTs(
   schema: ParamItemSchema,
   apiConfig: ApiListItem,
   parents: string[]
-): Omit<SchemaToTsReturn, 'parents'> {
+): Omit<SchemaToTsReturn, 'parents' | 'paramNotNull'> {
   // 获取参数的类型字符串 同时处理自定义数据结构
   const type = normalizeParamType(schema)
 

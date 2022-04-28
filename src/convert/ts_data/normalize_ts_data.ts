@@ -1,5 +1,6 @@
 import { normalizeTypeName } from '../../utils/normalize_prop_name'
 import { isObject } from '../../utils/validate_type'
+import { API_PARAM_REQUIRED } from '../../constant'
 
 /**
  * @description 压缩字段名
@@ -45,20 +46,29 @@ export function normalizeTsData(
   parentName: string,
   data: Record<string, SchemaToTsReturn> = {}
 ): Record<string, any> {
+  const parentsTsCache = new Map<string, any>()
+
   return Object.entries(data).reduce((result, [name, config]) => {
-    const { isArrayType, content, parents, cycle_path } = config
-    // 如果是对象则需要计算出对应的 typeName
-    // 最长不超过 24 个字符
+    const { isArrayType, content, parents, paramNotNull, cycle_path } = config
+    // 是否必填
+    const required = API_PARAM_REQUIRED.when(+paramNotNull, 'required')
+
+    // 如果是对象则需要计算出对应的 typeName  最长不超过 24 个字符
     const optimized = compressName(parentName, name.replace(/\?|"/g, ''), 24)
+    const attr = `${name}${required ? '' : '?'}`
+
+    if (cycle_path) {
+      console.log(cycle_path, parentsTsCache, attr)
+    }
 
     if (content === null || !isObject(content)) {
-      result[parentName] = { ...result[parentName], [name]: content }
+      result[parentName] = { ...result[parentName], [attr]: content }
       return { ...result }
     }
 
     const typeName = `${optimized}${isArrayType ? '[]' : ''}`
-
-    result[parentName] = { ...result[parentName], [name]: typeName }
+    parentsTsCache.set(parents.join('=>'), typeName)
+    result[parentName] = { ...result[parentName], [attr]: typeName }
     return { ...result, ...normalizeTsData(optimized, content) }
   }, {} as Record<string, any>)
 }

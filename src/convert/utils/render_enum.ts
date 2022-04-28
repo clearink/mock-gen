@@ -20,8 +20,6 @@ export function renderTsEnum(enumList: any[] | string, isArrayType: boolean) {
       .replace(/(^\[)|(\]$)/g, '')
       .replace(/\,/g, ' | ')
   }
-  if (isArrayType) {
-    return { type: 'enum', content: `(${enumList})[]`, isArrayType }
-  }
-  return { type: 'enum', content: enumList, isArrayType }
+  const content = isArrayType ? `(${enumList})[]` : enumList
+  return { type: 'enum', content, isArrayType }
 }

@@ -24,4 +24,5 @@ interface SchemaToTsReturn {
   cycle_path?: string[]
   isArrayType: boolean
   parents: string[]
+  paramNotNull: 0 | 1 // 是否必填
 }
