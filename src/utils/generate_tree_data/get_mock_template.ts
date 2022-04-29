@@ -38,9 +38,10 @@ export default function getMockTemplate(
     return template
   }
 
+  const isArrayType = isArray(currentTemplate[matched])
+
   currentTemplate[matched] = generateTreeData(depth - 1, templatePath, $fullPath, true)
-  if (isArray(currentTemplate[matched])) {
-    currentTemplate[matched] = [currentTemplate[matched]]
-  }
+
+  if (isArrayType) currentTemplate[matched] = [currentTemplate[matched]]
   return template
 }
