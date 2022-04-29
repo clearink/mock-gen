@@ -33,7 +33,7 @@ export default function getMockTemplate(
   const keys = Object.keys(currentTemplate)
   const matched = keys.find((key) => key.replace(/\|.*$/g, '') === paramKey)!
 
-  if (depth <= 2 || !matched) { 
+  if (depth <= 2 || !matched) {
     delete currentTemplate[matched]
     return template
   }

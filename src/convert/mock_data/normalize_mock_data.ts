@@ -5,27 +5,23 @@ export default function normalizeMockData(
   raw?: true // 渲染原始数据
 ): string {
   // hack 修复 normalize 时失效
-  if (!isObject(template)) return raw ? template : `"${template}"`
+  if (!isObject(template)) return raw || !isString(template) ? template : `"${template}"`
 
-  const initialValue = isArray(template) ? '' : {}
+  const isArrayType = isArray(template)
   const $template: [string, MockTemplateValue | MockTemplateType][] = Object.entries(template) // [string, ][]
-  const content = $template.reduce((result, [key, value]) => {
+  const content = $template.reduce((result, [key, value], index) => {
     // 数组的情况一定要转成字符串
-    if (isString(result)) return result + normalizeMockData(value as MockTemplateType, raw)
+    const separator = index === 0 ? '' : ','
+    if (isArrayType) {
+      const content = normalizeMockData(value as MockTemplateType, raw)
+      return `${result}${separator}${content}`
+    }
 
     const { rule, content, render_raw } = value as MockTemplateValue
     const suffix = rule ? `|${rule}` : ''
     const prop = `${key}${suffix}`
-
-    return { ...result, [prop]: normalizeMockData(content, render_raw) }
-  }, initialValue)
-
-  // 数组字符串
-  if (isArray(template)) return `[${content}]`
-
-  const str = Object.entries(content).reduce((result, [key, value], index) => {
-    const separator = index === 0 ? '' : ','
-    return `${result}${separator}"${key}":${value}`
+    return `${result}${separator}"${prop}":${normalizeMockData(content, render_raw)}`
   }, '')
-  return `{${str}}`
+
+  return isArrayType ? `[${content}]` : `{${content}}`
 }

@@ -37,7 +37,8 @@ export function normalizeTsData(
     } else if (cycle_path) {
       const paths = [rootName].concat(cycle_path)
       const cacheType = tsCache.get(paths.join(SEPARATOR))
-      result[parentName] = { ...result[parentName], [attr]: cacheType ?? content }
+      const type = `${cacheType ?? content}${isArrayType ? '[]' : ''}`
+      result[parentName] = { ...result[parentName], [attr]: type}
     } else {
       result[parentName] = { ...result[parentName], [attr]: content }
     }
