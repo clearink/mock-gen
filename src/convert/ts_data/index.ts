@@ -53,12 +53,11 @@ function generateTs(
       const cycle_path = parents.slice()
       CycleCache.set(paths, { paramType, cycle_path })
       if (CycleCache.isCycle(paths, paramType)) {
-        return { ...result, [paramKey]: { content: 'any', paramNotNull, parents, cycle_path } }
+        return { ...result, [paramKey]: { paramNotNull, parents, cycle_path } }
       }
     }
 
     const { isArrayType, content, cycle_path } = schemaToTs(schema, apiConfig, paths)
-
     CycleCache.delete(paths) // 当前数据
     return { ...result, [paramKey]: { isArrayType, content, paramNotNull, parents, cycle_path } }
   }, {})

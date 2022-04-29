@@ -20,7 +20,7 @@ interface SchemaToJoiReturn {
   cycle_path?: string[]
 }
 interface SchemaToTsReturn {
-  content: string
+  content?: string | Record<string, any> | null
   cycle_path?: string[]
   isArrayType: boolean
   parents: string[]

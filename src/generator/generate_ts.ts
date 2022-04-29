@@ -40,9 +40,9 @@ async function handleWriteFile(
 
   await ensureFile(filePath)
   if (isAppend) {
-    await appendFile(filePath, normalizeFileData(fileData, filePath))
+    await appendFile(filePath, normalizeFileData(fileData, filePath, false))
   } else {
-    await writeFile(filePath, normalizeFileData(fileData, filePath))
+    await writeFile(filePath, normalizeFileData(fileData, filePath, false))
   }
   writeSet.add(filePath)
 }
