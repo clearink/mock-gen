@@ -123,8 +123,10 @@ function schemaToJoi(
     case 'short':
     case 'long':
       content = ['number()']
+      break
     case 'boolean':
       content = ['boolean()']
+      break
     case 'null':
       // 不验证该种类型, 因为 null 类型大多数不会被传递给后端
       break
