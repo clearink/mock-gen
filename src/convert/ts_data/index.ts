@@ -21,7 +21,8 @@ function convertToTs(apiConfig: ApiListItem) {
   CycleCache.clear() // 清空 cache
   const query = generateTs(urlParam, apiConfig) // query 参数
   CycleCache.clear() // 清空 cache
-  const response = generateTs(resultInfo, apiConfig) // 响应数据
+  const $resultInfo = resultInfo[0]?.paramList || []
+  const response = generateTs($resultInfo, apiConfig) // 响应数据
   return {
     body: normalizeTsData('BodyParam', body),
     query: normalizeTsData('QueryParam', query),
