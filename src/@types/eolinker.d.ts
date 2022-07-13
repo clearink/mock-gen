@@ -18,12 +18,20 @@ interface ParamItemSchema {
   minLength?: any
   maxLength?: any
 }
+interface ResultInfoItem {
+  responseID: number
+  responseCode: string // 状态码
+  responseName: string // 响应名称
+  paramJsonType: number // JSON数据根类型
+  isDefault: 0 | 1 // 是否为默认返回值
+  paramList: ParamItemSchema[]
+}
 
 interface ApiListItem {
   requestInfo: ParamItemSchema[]
   urlParam: ParamItemSchema[]
   restfulParam: ParamItemSchema[]
-  resultInfo: ParamItemSchema[]
+  resultInfo: ResultInfoItem[]
   resultParamJsonType: 0 | 1
   groupName: string
   baseInfo: {

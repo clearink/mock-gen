@@ -19,7 +19,8 @@ import renderCycleTemplate from '../utils/render_cycle_template'
 function convertToMock(apiConfig: ApiListItem) {
   const { resultInfo } = apiConfig
   CycleCache.clear() // 清空 cache
-  const template = generateMock(resultInfo, apiConfig)
+  const $resultInfo = resultInfo[0]?.paramList || []
+  const template = generateMock($resultInfo, apiConfig)
   return normalizeMockData(renderCycleTemplate(template))
 }
 
